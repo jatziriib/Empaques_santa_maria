@@ -1,6 +1,8 @@
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import dotenv from 'dotenv';
+import { Usuario } from '../entities/usuario.entity';
+import { Rol } from '../entities/rol.entity';
 
 
 
@@ -16,6 +18,6 @@ export const AppDataSource = new DataSource({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   synchronize: true,
-  logging: true,
-  entities: []
+  logging: false,
+  entities: [Usuario, Rol]
 });

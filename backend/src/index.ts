@@ -1,18 +1,20 @@
-import "reflect-metadata"; 
-import express, { Request, Response } from "express";
-import dotenv from "dotenv";
+import express from "express";
+import "reflect-metadata";
+import { AppDataSource } from "./bd/data-source";
+import "dotenv/config";
+import rutasUsuario from "./routes/rutas.usuario";
+import rutasAuth from "./routes/rutas.auth";
 
-dotenv.config();        
 
 const app = express();
-const PORT = process.env.PORT || 3000;
-
 app.use(express.json());
+app.use("/usuarios", rutasUsuario)
+app.use("/autenticacion", rutasAuth)
 
-app.get("/", (req: Request, res: Response) => {
-  res.json({ message: "Back funcionandooo :)" });
-});
+AppDataSource.initialize()
+  .then(() => {
+    console.log("BD conectada");
+    app.listen(4000, () => console.log("Servidor en http://localhost:4000"));
+  })
+  .catch((error) => console.error(error));
 
-app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
-});
