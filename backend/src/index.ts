@@ -4,12 +4,15 @@ import { AppDataSource } from "./bd/data-source";
 import "dotenv/config";
 import rutasUsuario from "./routes/rutas.usuario";
 import rutasAuth from "./routes/rutas.auth";
-
+import rutasMateriaPrima from "./routes/rutas.materiaprima";
+import rutasProductoTerminado from "./routes/rutas.productoterminado";
 
 const app = express();
 app.use(express.json());
 app.use("/usuarios", rutasUsuario)
 app.use("/autenticacion", rutasAuth)
+app.use("/materiaprima", rutasMateriaPrima)
+app.use("/productoterminado", rutasProductoTerminado)
 
 AppDataSource.initialize()
   .then(() => {

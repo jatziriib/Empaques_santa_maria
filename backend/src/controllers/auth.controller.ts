@@ -8,6 +8,7 @@ import { LoginDto } from "../dtos/login.dto";
 const authServicio = new AuthServicio();
 
 export class AuthController {
+  //registro
   static async registrar(req: Request, res: Response) {
     const dto = plainToClass(RegistroDto, req.body);
     const errores = await validate(dto);
@@ -22,6 +23,7 @@ export class AuthController {
     }
   }
 
+  //login
   static async login(req: Request, res: Response) {
     const dto = plainToClass(LoginDto, req.body);
     const errores = await validate(dto);
