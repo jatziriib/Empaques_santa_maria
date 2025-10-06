@@ -4,6 +4,9 @@ import { plainToClass } from "class-transformer";
 import { validate } from "class-validator";
 import { RegistroDto } from "../dtos/registro.dto";
 import { LoginDto } from "../dtos/login.dto";
+import { OlvidoContrasenaDto } from "../dtos/olvido.contrasena.dto";
+import { RestablecerContrasenaDto } from "../dtos/restablecer.contrasena.dto";
+import { VerificarOtpDto } from "../dtos/verificar.otp.dto";
 
 const authServicio = new AuthServicio();
 
@@ -37,4 +40,48 @@ export class AuthController {
       res.status(400).json({ message: (err as Error).message });
     }
   }
+
+  //olvido de contrasena
+  static async olvidoContrasena(req: Request, res:Response){
+    const dto = plainToClass(OlvidoContrasenaDto, req.body);
+    const errores = await validate(dto);
+    if(errores.length > 0) return res.status(400).json(errores)
+
+    try{
+      await authServicio.enviarOtp(dto.correo);
+      res.json({message: "Codigo enviado al correo"});
+    }catch(err){
+      res.status(400).json({message: (err as Error).message});
+    }
+  }
+
+  //verificar otp
+  static async verificarOtp(req:Request, res:Response){
+    const dto = plainToClass(VerificarOtpDto, req.body);
+    const errores = await validate(dto);
+    if(errores.length > 0) return res.status(400).json(errores)
+
+    try{
+      const valido = await authServicio.verificarOtp(dto.correo, dto.otp);
+      if(!valido) return res.status(400).json({message: "Codigo no valido o ya expiro"});
+      res.json({message: "codigo verificado, ya puedes restablecer la contrasena"});
+    }catch(err){
+      res.status(400).json({message: (err as Error).message});
+    }
+  }
+
+  //restablecer contrasena
+  static async restablecerContrasena(req:Request, res:Response){
+    const dto = plainToClass(RestablecerContrasenaDto, req.body);
+    const errores = await validate(dto);
+    if (errores.length > 0) return res.status(400).json(errores);
+
+    try {
+      await authServicio.restablecerContrasena(dto.correo, dto.nueva_contrasena);
+      res.json({ message: "contrasena restablecida bien" });
+    } catch (err) {
+      res.status(400).json({ message: (err as Error).message });
+    }
+  }
+
 }
