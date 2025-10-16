@@ -12,8 +12,9 @@ export class Movimientos {
     @Column({
         type: "enum",
         enum: [
-            "entrada",
-            "salida",
+            "entrada_materia",
+            "salida_producto_terminado",
+            "registro_producto terminado",
             "actualizacion",
             "eliminacion"
         ],
