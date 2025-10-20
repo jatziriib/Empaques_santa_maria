@@ -8,13 +8,13 @@ export class Movimientos {
 
     @PrimaryGeneratedColumn()
     id_movimiento: number;
-    
+
     @Column({
         type: "enum",
         enum: [
             "entrada_materia",
             "salida_producto_terminado",
-            "registro_producto terminado",
+            "registro_producto_terminado",
             "actualizacion",
             "eliminacion"
         ],
@@ -22,7 +22,7 @@ export class Movimientos {
     tipo_movimiento: string;
 
     @Column({ type: "numeric", precision: 6, scale: 0, nullable: true })
-    cantidad: number;
+    cantidad: number; 
 
     @CreateDateColumn({ type: 'timestamp' })
     fecha_movimiento: Date;
@@ -32,11 +32,11 @@ export class Movimientos {
     usuario: Usuario;
 
     @ManyToOne(() => MateriaPrima, materiaPrima => materiaPrima.movimientos_inventario, { nullable: true })
-    @JoinColumn({ name: 'id_materia_prima' }) 
+    @JoinColumn({ name: 'id_materia_prima' })
     materiaPrima: MateriaPrima;
 
     @ManyToOne(() => ProductosTerminados, productosTerminados => productosTerminados.movimientos_inventario, { nullable: true })
-    @JoinColumn({ name: 'id_productos_terminados' }) 
+    @JoinColumn({ name: 'id_producto_terminado' })
     productosTerminados: ProductosTerminados;
 
 }

@@ -9,16 +9,16 @@ const materiaPrimaServicio = new MateriaPrimaServicio();
 
 export class MateriaPrimaController {
     //get de los materiales
-      static async getAll(req: Request, res: Response) {
+    static async getAll(req: Request, res: Response) {
         try {
-          const materiaPrima = await materiaPrimaServicio.getAll();
-          res.json(materiaPrima);
+            const materiaPrima = await materiaPrimaServicio.getAll();
+            res.json(materiaPrima);
         }
         catch (err) {
-          res.status(500).json({ message: "Error al obtenerer usuarios", error: err });
-    
+            res.status(500).json({ message: "Error al obtenerer usuarios", error: err });
+
         }
-      }
+    }
 
     //get x id
     static async getById(req: Request, res: Response) {
