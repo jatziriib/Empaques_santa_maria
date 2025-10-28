@@ -13,6 +13,13 @@ export class MateriaPrimaServicio {
   async getAll(): Promise<MateriaPrima[]> {
     return await this.repo.find();
   }
+
+  //solo activos
+  /*
+  async getAll(): Promise<MateriaPrima[]> {
+    return await this.repo.find({where: {activo: true}});
+  }
+   */
   async getById(id_materia_prima: number): Promise<MateriaPrima | null> {
     return await this.repo.findOneBy({ id_materia_prima });
   }
@@ -46,19 +53,20 @@ export class MateriaPrimaServicio {
 
     return actualizada;
   }
-  async delete(id_materia_prima: number, id_usuario?: number): Promise<boolean> {
-    const resultado = await this.repo.delete(id_materia_prima);
-    const eliminada = resultado.affected !== 0;
+  //desactivar material
+  async desactivar(id_materia_prima: number, id_usuario?: number): Promise<boolean> {
+    const materia = await this.repo.findOneBy({ id_materia_prima });
+    if (!materia) return false;
 
-    if (eliminada) {
-      await this.movimientosServicio.registrar({
-        tipo_movimiento: "eliminacion",
-        cantidad: 0,
-        id_materia_prima,
-        id_usuario,
-      });
-    }
+    materia.activo = false;
+    await this.repo.save(materia);
 
-    return eliminada;
+    await this.movimientosServicio.registrar({
+      tipo_movimiento: "desactivacion",
+      cantidad: 0,
+      id_materia_prima,
+      id_usuario,
+    });
+    return true;
   }
 }

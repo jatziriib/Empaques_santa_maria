@@ -3,10 +3,12 @@ import { ProductosTerminados } from "../entities/productosterminados.entity";
 import { CrearProductoTerminadoDto } from "../dtos/create.productoterminado.dto";
 import { ActualizarProductoDto } from "../dtos/update.producto.dto";
 import { MovimientosServicio } from "./movimientos.servicio";
+import { AlertasServicio } from "./alertastock.servicio";
 
 export class ProductoTerminadoServicio {
     private repo = AppDataSource.getRepository(ProductosTerminados);
     private movimientosServicio = new MovimientosServicio();
+    private alertaServicio = new AlertasServicio();
 
     async getAll(): Promise<ProductosTerminados[]> {
         return await this.repo.find();
@@ -26,20 +28,71 @@ export class ProductoTerminadoServicio {
             id_producto_terminado: producto.id_producto_terminado,
             id_usuario,
         });
+        //checar si el producto 
+
         return producto;
     }
 
-    async update(id_producto_terminado: number, dto: ActualizarProductoDto): Promise<ProductosTerminados | null> {
-        const producto = await this.repo.findOneBy({ id_producto_terminado: id_producto_terminado });
+    async update(id_producto_terminado: number, dto: ActualizarProductoDto, id_usuario?: number): Promise<ProductosTerminados | null> {
+        const producto = await this.repo.findOneBy({ id_producto_terminado });
         if (!producto) return null;
 
         this.repo.merge(producto, dto);
-        return await this.repo.save(producto);
+        const actualizada = await this.repo.save(producto);
+
+        await this.movimientosServicio.registrar({
+            tipo_movimiento: "actualizacion",
+            cantidad: 0,
+            id_producto_terminado,
+            id_usuario,
+        });
+
+        //checar si después actualizar, el stock esta bajo
+        await this.alertaServicio.revisarStockProducto(id_producto_terminado);
+
+        return actualizada;
     }
 
-    async delete(id_producto_terminado: number): Promise<boolean> {
-        const resultado = await this.repo.delete(id_producto_terminado);
-        return resultado.affected !== 0;
+    async desactivar(id_producto_terminado: number, id_usuario?: number): Promise<boolean> {
+        const producto = await this.repo.findOneBy({ id_producto_terminado });
+        if (!producto) return false;
+
+        producto.activo = false;
+        await this.repo.save(producto);
+
+        await this.movimientosServicio.registrar({
+            tipo_movimiento: "desactivacion",
+            cantidad: 0,
+            id_producto_terminado,
+            id_usuario,
+        });
+        return true;
     }
     //registrar producto terminado que ya sale
+    async registrarSalida(
+        id_producto_terminado: number,
+        cantidad: number,
+        id_usuario?: number
+    ): Promise<ProductosTerminados | null> {
+        const producto = await this.repo.findOneBy({ id_producto_terminado });
+        if (!producto) return null;
+
+        if (producto.stock_actual < cantidad) {
+            throw new Error("No hay stock para que pueda salir el producto");
+        }
+        producto.stock_actual -= cantidad;
+        await this.repo.save(producto);
+
+        await this.movimientosServicio.registrar({
+            tipo_movimiento: "salida_producto_terminado",
+            cantidad,
+            id_producto_terminado,
+            id_usuario,
+        });
+
+        //alerta
+        await this.alertaServicio.revisarStockProducto(id_producto_terminado);
+
+        return producto;
+    }
 }

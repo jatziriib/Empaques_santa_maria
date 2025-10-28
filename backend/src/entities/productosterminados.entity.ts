@@ -13,6 +13,9 @@ export class ProductosTerminados{
     @Column({ type: "numeric", precision: 6, scale: 0, nullable: false })
     stock_minimo: number;
 
+    @Column({ type: "boolean", default: true})
+    activo: boolean;
+
     @CreateDateColumn({ type: 'timestamp' })
     fecha_registro: Date;
 
