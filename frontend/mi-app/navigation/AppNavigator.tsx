@@ -6,7 +6,6 @@ import LoginScreen from "../screens/LoginScreen";
 import LoginFormScreen from "../screens/LoginFormScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 import ResumenScreen from "../screens/ResumenScreen";
-import RecuperarContrasena from "../screens/RecuperarContrasenaScreen";
 
 export type RootStackParamList = {
   Splash: undefined;
@@ -14,7 +13,6 @@ export type RootStackParamList = {
   LoginForm: undefined;
   Register: undefined;
   Resumen: undefined;
-  RecuperarContrasena: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -31,7 +29,6 @@ export default function AppNavigator() {
         <Stack.Screen name="LoginForm" component={LoginFormScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="Resumen" component={ResumenScreen} />
-        <Stack.Screen name="RecuperarContrasena" component={RecuperarContrasena} />
       </Stack.Navigator>
     </NavigationContainer>
   );

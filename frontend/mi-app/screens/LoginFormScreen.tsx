@@ -6,38 +6,16 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
-  Alert,
 } from "react-native";
-import { usrAuth } from "../context/AuthContext";
 
 export default function LoginFormScreen({ navigation }: any) {
-  const [correo, setCorreo] = useState("");
+  const [usuario, setUsuario] = useState("");
   const [contrasena, setContrasena] = useState("");
-  const { iniciarSesion } = usrAuth();
 
-  const handleLogin = async () => {
-    try {
-      const respuesta = await fetch("http://192.168.1.158:4000/autenticacion/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ correo, contrasena }),
-      });
-
-      const data = await respuesta.json();
-
-      if (!respuesta.ok) {
-        Alert.alert("Error", data.message || "Credenciales inválidas");
-        return;
-      }
-
-      //guardar el token y datos en el contexto
-      await iniciarSesion(data.token, { correo });
-
-      navigation.navigate("Resumen");
-    } catch (error) {
-      console.log(error);
-      Alert.alert("Error", "No se pudo iniciar sesión. Intenta de nuevo.");
-    }
+  // Aquí podrías agregar tu validación o lógica de autenticación
+  const handleLogin = () => {
+    // En un futuro podrías validar con API, por ahora navega directo:
+    navigation.navigate("Resumen");
   };
 
   return (
@@ -50,9 +28,9 @@ export default function LoginFormScreen({ navigation }: any) {
 
       <TextInput
         style={styles.input}
-        placeholder="Correo"
-        value={correo}
-        onChangeText={setCorreo}
+        placeholder="Usuario"
+        value={usuario}
+        onChangeText={setUsuario}
         placeholderTextColor="#777"
       />
 
@@ -65,19 +43,14 @@ export default function LoginFormScreen({ navigation }: any) {
         placeholderTextColor="#777"
       />
 
-      {/* Botón de inicio de sesión */}
+      {/* 🔹 Botón de inicio de sesión */}
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Iniciar Sesión</Text>
       </TouchableOpacity>
 
-      {/* Enlace al registro */}
+      {/* 🔹 Enlace al registro */}
       <TouchableOpacity onPress={() => navigation.navigate("Register")}>
         <Text style={styles.link}>¿No tienes cuenta?</Text>
-      </TouchableOpacity>
-
-      {/*Recuperar contrasena*/}
-      <TouchableOpacity onPress={() => navigation.navigate("RecuperarContrasena")}>
-        <Text style={styles.link}>¿Olvidaste tu contrasena?</Text>
       </TouchableOpacity>
     </View>
   );
