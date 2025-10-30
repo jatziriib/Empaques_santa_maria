@@ -1,5 +1,6 @@
 import express from "express";
 import "reflect-metadata";
+import cors from "cors";
 import { AppDataSource } from "./bd/data-source";
 import "dotenv/config";
 import rutasUsuario from "./routes/rutas.usuario";
@@ -8,7 +9,14 @@ import rutasMateriaPrima from "./routes/rutas.materiaprima";
 import rutasProductoTerminado from "./routes/rutas.productoterminado";
 
 const app = express();
+app.use(cors({
+  origin:"*",
+  methods:["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}));
+
 app.use(express.json());
+
 app.use("/usuarios", rutasUsuario)
 app.use("/autenticacion", rutasAuth)
 app.use("/materiaprima", rutasMateriaPrima)
