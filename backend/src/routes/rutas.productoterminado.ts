@@ -10,7 +10,7 @@ router.get("/:id_producto_terminado", ProductoTerminadoController.getById);
 router.post("/", ProductoTerminadoController.create);
 //update producto
 router.put("/:id_producto_terminado", ProductoTerminadoController.update);
-//delete producto
-router.delete("/:id_producto_terminado", ProductoTerminadoController.delete);
+//desactivar producto
+router.delete("/:id_producto_terminado", ProductoTerminadoController.desactivar);
 
 export default router;

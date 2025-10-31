@@ -7,6 +7,7 @@ import rutasUsuario from "./routes/rutas.usuario";
 import rutasAuth from "./routes/rutas.auth";
 import rutasMateriaPrima from "./routes/rutas.materiaprima";
 import rutasProductoTerminado from "./routes/rutas.productoterminado";
+import rutasMovimientos from "./routes/rutas.movimientos";
 
 const app = express();
 app.use(cors({
@@ -21,6 +22,7 @@ app.use("/usuarios", rutasUsuario)
 app.use("/autenticacion", rutasAuth)
 app.use("/materiaprima", rutasMateriaPrima)
 app.use("/productoterminado", rutasProductoTerminado)
+app.use("/movimientos", rutasMovimientos)
 
 AppDataSource.initialize()
   .then(() => {

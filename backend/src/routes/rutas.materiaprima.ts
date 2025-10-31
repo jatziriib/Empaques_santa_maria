@@ -11,7 +11,7 @@ router.get("/:id_materia_prima", MateriaPrimaController.getById);
 router.post("/", MateriaPrimaController.create);
 //update materia
 router.put("/:id_materia_prima", MateriaPrimaController.update);
-//delete materia
-router.delete("/:id_materia_prima", MateriaPrimaController.delete);
+//desactivar materia
+router.patch("/:id_materia_prima/desactivar", MateriaPrimaController.desactivar);
 
 export default router;

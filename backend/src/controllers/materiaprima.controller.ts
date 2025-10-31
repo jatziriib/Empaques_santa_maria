@@ -4,26 +4,27 @@ import { Request, Response } from "express";
 import { CrearMateriaPrimaDto } from "../dtos/create.materiaprima.dto";
 import { ActualizarMateriaPrimaDto } from "../dtos/update.materiaprima.dto";
 import { MateriaPrimaServicio } from "../services/materiaprima.servicio";
+import { error } from "console";
 
 const materiaPrimaServicio = new MateriaPrimaServicio();
 
 export class MateriaPrimaController {
     //get de los materiales
-      static async getAll(req: Request, res: Response) {
+    static async getAll(req: Request, res: Response) {
         try {
-          const materiaPrima = await materiaPrimaServicio.getAll();
-          res.json(materiaPrima);
+            const materiaPrima = await materiaPrimaServicio.getAll();
+            res.json(materiaPrima);
         }
         catch (err) {
-          res.status(500).json({ message: "Error al obtenerer usuarios", error: err });
-    
+            res.status(500).json({ message: "Error al obtenerer usuarios", error: err });
+
         }
-      }
+    }
 
     //get x id
     static async getById(req: Request, res: Response) {
         const id_materia_prima = Number(req.params.id_materia_prima);
-        if (isNaN(id_materia_prima)) return res.status(400).json({ message: " ID no es valido" });
+        if (isNaN(id_materia_prima)) return res.status(400).json({ message: " idd no es valido" });
 
         try {
             const materiaPrima = await materiaPrimaServicio.getById(id_materia_prima);
@@ -70,16 +71,21 @@ export class MateriaPrimaController {
         }
     }
 
-    //delete material
-    static async delete(req: Request, res: Response) {
+    //desactivar materIa
+    static async desactivar(req: Request, res: Response) {
         const id_materia_prima = Number(req.params.id_materia_prima);
+        if (isNaN(id_materia_prima))
+            return res.status(400).json({ message: "El id no es valido" });
+
         try {
-            const exitoso = await materiaPrimaServicio.delete(id_materia_prima);
-            if (!exitoso) return res.status(404).json({ message: "Material no encontrado" });
-            res.json({ message: "Material eliminado" });
+            const desactivo = await materiaPrimaServicio.desactivar(id_materia_prima);
+            if (!desactivo)
+                return res.status(404).json({ message: "Materia no encontrado" });
         } catch (err) {
-            res.status(500).json({ message: "Error al eliminar material", error: err });
+            res.status(500).json({ message: "Error al desactivar", error: err });
         }
     }
+
+
 }
 

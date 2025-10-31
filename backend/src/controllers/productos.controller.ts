@@ -4,6 +4,7 @@ import { Request, Response } from "express";
 import { CrearProductoTerminadoDto } from "../dtos/create.productoterminado.dto";
 import { ActualizarProductoDto } from "../dtos/update.producto.dto";
 import { ProductoTerminadoServicio } from "../services/productoterminado.servicio";
+import { RegistrarSalidaProductoDto } from "../dtos/registrar.salida.producto.dto";
 
 const productoTerminadoServicio = new ProductoTerminadoServicio();
 
@@ -20,7 +21,7 @@ export class ProductoTerminadoController {
     //get x id
     static async getById(req: Request, res: Response) {
         const id_producto_terminado = Number(req.params.id_producto_terminado);
-        if (isNaN(id_producto_terminado)) return res.status(400).json({ message: "ID no es valido" });
+        if (isNaN(id_producto_terminado)) return res.status(400).json({ message: "id no es valido" });
 
         try {
             const productoTerminado = productoTerminadoServicio.getById(id_producto_terminado);
@@ -64,15 +65,57 @@ export class ProductoTerminadoController {
         }
     }
 
-    //delete material
-    static async delete(req: Request, res: Response) {
+    //desact producto
+    static async desactivar(req: Request, res: Response) {
         const id_producto_terminado = Number(req.params.id_producto_terminado);
+        const { id_usuario } = req.body;
+
+        if (isNaN(id_producto_terminado)) {
+            return res.status(400).json({ message: "id no es valido" });
+        }
         try {
-            const exitoso = await productoTerminadoServicio.delete(id_producto_terminado);
-            if (!exitoso) return res.status(404).json({ message: "Producto no encontrado" });
-            res.json({ message: "Producto eliminado" });
+            const exito = await productoTerminadoServicio.desactivar(id_producto_terminado, id_usuario);
+
+            if (!exito) {
+                return res.status(404).json({ message: "Producto no encontrado" });
+            }
+
+            res.json({ message: "Producto desactivado correctamente" });
         } catch (err) {
-            res.status(500).json({ message: "Error al eliminar producto", error: err });
+            res.status(500).json({
+                message: "Error al desactivar el producto",
+                error: err,
+            });
+        }
+    }
+
+    //registrar prod que ya sale
+    static async registrarSalida(req: Request, res: Response) {
+        const id_producto_terminado = Number(req.params.id_producto_terminado);
+        const dto = plainToClass(RegistrarSalidaProductoDto, req.body);
+        const errores = await validate(dto);
+
+        if (isNaN(id_producto_terminado)) return res.status(400).json({ message: "id no válido" });
+        if (errores.length > 0) return res.status(400).json(errores);
+
+        try {
+            const producto = await productoTerminadoServicio.registrarSalida(
+                id_producto_terminado,
+                dto.cantidad,
+                dto.id_usuario
+            );
+
+            if (!producto) return res.status(404).json({ message: "Producto no encontrado" });
+
+            res.json({
+                message: "Salida registrada correctamente",
+                producto,
+            });
+        } catch (err) {
+            res.status(500).json({
+                message: err instanceof Error ? err.message : "Error al registrar salida del producto",
+                error: err,
+            });
         }
     }
 }
