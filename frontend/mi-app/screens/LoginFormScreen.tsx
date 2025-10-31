@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { usrAuth } from "../context/AuthContext";
 import {
   View,
   Text,
@@ -6,18 +7,38 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
+  Alert,
 } from "react-native";
 
 export default function LoginFormScreen({ navigation }: any) {
-  const [usuario, setUsuario] = useState("");
+  const [correo, setCorreo] = useState("");
   const [contrasena, setContrasena] = useState("");
+  const { iniciarSesion } = usrAuth();
 
-  // Aquí podrías agregar tu validación o lógica de autenticación
-  const handleLogin = () => {
-    // En un futuro podrías validar con API, por ahora navega directo:
-    navigation.navigate("Resumen");
-  };
+  const handleLogin = async () => {
+    try {
+      const respuesta = await fetch("http://192.168.1.158:4000/autenticacion/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ correo, contrasena }),
+      });
 
+      const data = await respuesta.json();
+
+      if (!respuesta.ok) {
+        Alert.alert("Error", data.message || "Credenciales inválidas");
+        return;
+      }
+
+      //guardar el token y datos en el contexto
+      await iniciarSesion(data.token, { correo });
+
+      navigation.navigate("Resumen");
+    } catch (error) {
+      console.log(error);
+      Alert.alert("Error", "No se pudo iniciar sesión. Intenta de nuevo.");
+    }
+  }
   return (
     <View style={styles.container}>
       <Image
@@ -28,9 +49,9 @@ export default function LoginFormScreen({ navigation }: any) {
 
       <TextInput
         style={styles.input}
-        placeholder="Usuario"
-        value={usuario}
-        onChangeText={setUsuario}
+        placeholder="Correo"
+        value={correo}
+        onChangeText={setCorreo}
         placeholderTextColor="#777"
       />
 
@@ -52,7 +73,13 @@ export default function LoginFormScreen({ navigation }: any) {
       <TouchableOpacity onPress={() => navigation.navigate("Register")}>
         <Text style={styles.link}>¿No tienes cuenta?</Text>
       </TouchableOpacity>
+
+      {/*Recuperar contrasena*/}
+      <TouchableOpacity onPress={() => navigation.navigate("RecuperarContrasena")}>
+        <Text style={styles.link}>¿Olvidaste tu contrasena?</Text>
+      </TouchableOpacity>
     </View>
+
   );
 }
 
