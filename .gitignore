@@ -1,0 +1,20 @@
+# Node.js
+backend/node_modules/
+frontend/node_modules/
+
+# Archivos de logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+#ENVS
+backend/.env
+frontend/.env
+
+# Build
+backend/dist/
+frontend/build/
+
+# Sistemas
+.DS_Store
+Thumbs.db
