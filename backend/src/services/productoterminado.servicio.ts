@@ -3,12 +3,11 @@ import { ProductosTerminados } from "../entities/productosterminados.entity";
 import { CrearProductoTerminadoDto } from "../dtos/create.productoterminado.dto";
 import { ActualizarProductoDto } from "../dtos/update.producto.dto";
 import { MovimientosServicio } from "./movimientos.servicio";
-import { AlertasServicio } from "./alertastock.servicio";
+
 
 export class ProductoTerminadoServicio {
     private repo = AppDataSource.getRepository(ProductosTerminados);
     private movimientosServicio = new MovimientosServicio();
-    private alertaServicio = new AlertasServicio();
 
     async getAll(): Promise<ProductosTerminados[]> {
         return await this.repo.find();
@@ -28,7 +27,6 @@ export class ProductoTerminadoServicio {
             id_producto_terminado: producto.id_producto_terminado,
             id_usuario,
         });
-        //checar si el producto 
 
         return producto;
     }
@@ -46,9 +44,6 @@ export class ProductoTerminadoServicio {
             id_producto_terminado,
             id_usuario,
         });
-
-        //checar si después actualizar, el stock esta bajo
-        await this.alertaServicio.revisarStockProducto(id_producto_terminado);
 
         return actualizada;
     }
@@ -89,9 +84,6 @@ export class ProductoTerminadoServicio {
             id_producto_terminado,
             id_usuario,
         });
-
-        //alerta
-        await this.alertaServicio.revisarStockProducto(id_producto_terminado);
 
         return producto;
     }
