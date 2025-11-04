@@ -3,31 +3,40 @@ import { MateriaPrima } from "../entities/materiaprima.entity";
 import { CrearMateriaPrimaDto } from "../dtos/create.materiaprima.dto";
 import { ActualizarMateriaPrimaDto } from "../dtos/update.materiaprima.dto";
 import { MovimientosServicio } from "./movimientos.servicio";
+import { AlertasServicio } from "./alertastock.servicio";
+
+type RespuestaMateria = {
+  mensaje: string;
+  materia: MateriaPrima;
+  alerta: string | null;
+};
 
 export class MateriaPrimaServicio {
   private repo = AppDataSource.getRepository(MateriaPrima);
   private movimientosServicio = new MovimientosServicio();
+  private alertaServicio = new AlertasServicio();
+
   constructor() {
     this.repo = AppDataSource.getRepository(MateriaPrima);
   }
-  async getAll(): Promise<MateriaPrima[]> {
+  /*async getAll(): Promise<MateriaPrima[]> {
     return await this.repo.find();
-  }
+  }*/
 
   //solo activos
-  /*
   async getAll(): Promise<MateriaPrima[]> {
-    return await this.repo.find({where: {activo: true}});
+    return await this.repo.find({ where: { activo: true } });
   }
-   */
+
   async getById(id_materia_prima: number): Promise<MateriaPrima | null> {
     return await this.repo.findOneBy({ id_materia_prima });
   }
-  async create(dto: CrearMateriaPrimaDto, id_usuario?: number): Promise<MateriaPrima> {
-    const nueva = this.repo.create(dto);
-    const materia = await this.repo.save(nueva);
 
-    //registrar movimiento de entrada 
+  //registrar material
+  async create(dto: CrearMateriaPrimaDto, id_usuario?: number): Promise<RespuestaMateria> {
+    const nuevo = this.repo.create(dto);
+    const materia = await this.repo.save(nuevo);
+
     await this.movimientosServicio.registrar({
       tipo_movimiento: "entrada_materia",
       cantidad: dto.stock_actual ?? 0,
@@ -35,9 +44,16 @@ export class MateriaPrimaServicio {
       id_usuario,
     });
 
-    return materia;
+    const alerta = await this.alertaServicio.revisarStockMateria(materia.id_materia_prima);
+
+    return {
+      mensaje: "materia registrada correctamente",
+      materia,
+      alerta: alerta ? alerta.mensaje : null,
+    };
   }
-  async update(id_materia_prima: number, dto: ActualizarMateriaPrimaDto, id_usuario?: number): Promise<MateriaPrima | null> {
+  //Actualizar
+  async update(id_materia_prima: number, dto: ActualizarMateriaPrimaDto, id_usuario?: number): Promise<RespuestaMateria | null> {
     const materia = await this.repo.findOneBy({ id_materia_prima });
     if (!materia) return null;
 
@@ -51,12 +67,19 @@ export class MateriaPrimaServicio {
       id_usuario,
     });
 
-    return actualizada;
+    const alerta = await this.alertaServicio.revisarStockMateria(materia.id_materia_prima);
+
+    return {
+      mensaje: "materia actualizada de forma correcta",
+      materia: actualizada,
+      alerta: alerta ? alerta.mensaje : null,
+    };
   }
+
   //desactivar material
-  async desactivar(id_materia_prima: number, id_usuario?: number): Promise<boolean> {
+  async desactivar(id_materia_prima: number, id_usuario?: number): Promise<RespuestaMateria | null> {
     const materia = await this.repo.findOneBy({ id_materia_prima });
-    if (!materia) return false;
+    if (!materia) return null;
 
     materia.activo = false;
     await this.repo.save(materia);
@@ -67,6 +90,13 @@ export class MateriaPrimaServicio {
       id_materia_prima,
       id_usuario,
     });
-    return true;
+
+    const alerta = await this.alertaServicio.revisarStockMateria(materia.id_materia_prima);
+
+    return {
+      mensaje: "materia desactivada correctamente",
+      materia,
+      alerta: alerta ? alerta.mensaje : null,
+    };
   }
 }

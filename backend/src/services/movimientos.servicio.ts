@@ -47,6 +47,35 @@ export class MovimientosServicio {
             alerta, //null o la alerta
         };
     }
+    async actualizar(id_movimiento: number, data: MovimientosInventarioDto) {
+        const movimiento = await this.repo.findOne({ where: { id_movimiento }, relations: ["materiaPrima", "productosTerminados"] });
+        if (!movimiento) throw new Error("Movimiento no encontrado");
+
+
+        //update de campos
+        movimiento.tipo_movimiento = data.tipo_movimiento ?? movimiento.tipo_movimiento;
+        movimiento.cantidad = data.cantidad ?? movimiento.cantidad;
+
+        //actualizar las relaciones si se cambian
+        if (data.id_materia_prima) {
+            movimiento.materiaPrima = await this.repoMateria.findOneBy({ id_materia_prima: data.id_materia_prima });
+        }
+        if (data.id_producto_terminado) {
+            movimiento.productosTerminados = await this.repoProductosT.findOneBy({ id_producto_terminado: data.id_producto_terminado });
+        }
+        const guardar = await this.repo.save(movimiento);
+
+        //checar alertas
+            let alerta = null;
+    if (movimiento.productosTerminados) {
+        alerta = await this.alertaServicio.revisarStockProducto(movimiento.productosTerminados.id_producto_terminado);
+    } else if (movimiento.materiaPrima) {
+        alerta = await this.alertaServicio.revisarStockMateria(movimiento.materiaPrima.id_materia_prima);
+    }
+    return { mensaje: "Movimiento actualizado correctamente", movimiento: guardar, alerta };
+    }
+
+
     //tolos los movimientos
     async movimientos(): Promise<Movimientos[]> {
         return this.repo.find({

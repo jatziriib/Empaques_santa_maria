@@ -26,7 +26,7 @@ const chartConfig = {
   barPercentage: 0.6,
   decimalPlaces: 0,
   propsForBackgroundLines: {
-    strokeDasharray: "", // quita las líneas punteadas
+    strokeDasharray: "", 
   },
 };
 
