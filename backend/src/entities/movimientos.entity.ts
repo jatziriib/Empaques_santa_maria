@@ -16,7 +16,8 @@ export class Movimientos {
             "salida_producto_terminado",
             "registro_producto_terminado",
             "actualizacion",
-            "desactivacion"
+            "desactivacion",
+            "devolucion",
         ],
     })
     tipo_movimiento: string;
