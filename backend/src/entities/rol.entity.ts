@@ -10,8 +10,9 @@ export class Rol {
     @Column({
         type: "enum",
         enum: [
-            "jefe",
-            "trabajador"
+            "admin",
+            "encargadotarimas",
+            "encargadocompras"
         ],
     })
     nombre: string;
