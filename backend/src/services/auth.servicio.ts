@@ -1,7 +1,7 @@
 import { AppDataSource } from "../bd/data-source";
 import { Usuario } from "../entities/usuario.entity";
 import { Rol } from "../entities/rol.entity";
-import { RegistroDto } from "../dtos/registro.dto";
+import { DtoRegistro } from "../dtos/registros.dto";
 import { LoginDto } from "../dtos/login.dto";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -22,7 +22,7 @@ export class AuthServicio {
   private rolRepositorio = AppDataSource.getRepository(Rol);
 
   //Registrar usuario
-  async registrar(data: RegistroDto): Promise<Usuario> {
+  async registrar(data: DtoRegistro): Promise<Usuario> {
     //ver si el correo ya existe
     const existe = await this.usrRepositorio.findOneBy({ correo: data.correo });
     if (existe) throw new Error("El correo ya está registrado");
@@ -63,7 +63,7 @@ export class AuthServicio {
     const token = jwt.sign(
       { id: usuario.id_usuario, rol: usuario.rol.nombre },
       process.env.JWT_SECRET || "secretoo",
-      { expiresIn: "1h" }
+      { expiresIn: "1h" } //1 hora para que expire
     );
 
     return { token };

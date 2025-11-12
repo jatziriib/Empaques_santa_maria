@@ -16,7 +16,6 @@ export class AlertasServicio {
                 mensaje: `La materia '${materia.id_materia_prima}' está baja de stock (${materia.stock_actual}/${materia.stock_minimo})`,
                 fecha: new Date(),
             };
-            console.log(alerta.mensaje);
             return alerta; //objeto alerta
         }
         return null;
@@ -32,7 +31,6 @@ export class AlertasServicio {
                 mensaje: `El producto '${producto.id_producto_terminado}' está bajo de stock (${producto.stock_actual}/${producto.stock_minimo})`,
                 fecha: new Date(),
             };
-            console.log(alerta.mensaje);
             return alerta; 
         }
         return null;

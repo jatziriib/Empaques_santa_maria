@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { AuthServicio } from "../services/auth.servicio";
 import { plainToClass } from "class-transformer";
 import { validate } from "class-validator";
-import { RegistroDto } from "../dtos/registro.dto";
+import { DtoRegistro } from "../dtos/registros.dto";
 import { LoginDto } from "../dtos/login.dto";
 import { OlvidoContrasenaDto } from "../dtos/olvido.contrasena.dto";
 import { RestablecerContrasenaDto } from "../dtos/restablecer.contrasena.dto";
@@ -13,7 +13,7 @@ const authServicio = new AuthServicio();
 export class AuthController {
   //registro
   static async registrar(req: Request, res: Response) {
-    const dto = plainToClass(RegistroDto, req.body);
+    const dto = plainToClass(DtoRegistro, req.body);
     const errores = await validate(dto);
 
     if (errores.length > 0) return res.status(400).json(errores);

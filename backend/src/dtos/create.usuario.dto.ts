@@ -16,6 +16,6 @@ export class CrearUsuarioDto {
     contrasena: string;
 
     @IsNotEmpty({ message: "El rol es obligatorio" })
-    @IsEnum(["jefe", "trabajador"], { message: "El rol debe ser jefe o trabajador" })
+    @IsEnum(["admin", "encargadotarimas", "encargadocompras"], { message: "El rol debe ser admin, encargado de compras o de tarimas" })
     rol: string;
 }

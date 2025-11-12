@@ -49,31 +49,37 @@ export class MovimientosServicio {
                     await this.repoProductosT.save(producto);
                 }
             }
-
             //busca encargado de compras
-            const encargadoCompras = await this.repoUsr.findOne({
+            const encargadosCompras = await this.repoUsr.find({
                 where: { rol: { nombre: "encargadocompras" } },
                 relations: ["rol"],
             });
 
-            if (encargadoCompras && encargadoCompras.correo) {
-                const transCorreos = nodemailer.createTransport({
-                    host: process.env.SMTP_HOST,
-                    port: Number(process.env.SMTP_PORT),
-                    auth: {
-                        user: process.env.SMTP_USER,
-                        pass: process.env.SMTP_PASS,
-                    },
-                });
-                await transCorreos.sendMail({
-                    from: process.env.SMTP_USER,
-                    to: encargadoCompras.correo,
-                    subject: "Notificación de Devolución",
-                    text: `Se ha registrado una devolución en el inventario por el usuario ${movimiento.usuario?.nombre || "desconocido"}.`,
-                });
-            } else {
-                console.warn("No se encontro al encargado de compras o no tiene un correo registrado.");
+            if (encargadosCompras.length > 0) {
+                const correos = encargadosCompras
+                    .filter(u => u.correo)
+                    .map(u => u.correo);
+
+                if (correos.length > 0) {
+                    const transCorreos = nodemailer.createTransport({
+                        host: process.env.SMTP_HOST,
+                        port: Number(process.env.SMTP_PORT),
+                        auth: {
+                            user: process.env.SMTP_USER,
+                            pass: process.env.SMTP_PASS,
+                        },
+                    });
+
+                    await transCorreos.sendMail({
+                        from: process.env.SMTP_USER,
+                        to: correos,
+                        subject: "Notificación de Devolución",
+                        text: `Se ha registrado una devolución en el inventario por el usuario ${movimiento.usuario?.nombre || "desconocido"}.`,
+                    });
+                }
             }
+
+
         }
 
         //checar si hay alerta

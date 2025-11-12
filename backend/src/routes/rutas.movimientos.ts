@@ -8,21 +8,21 @@ const router = Router();
 //materia
 
 router.post("/entrada-materia",
-    verificarToken, verificarRol(["admin", "encargadocompras"]), MovimientosController.registrarEntradaMateria
+    verificarToken, verificarRol(["admin", "encargadotarimas"]), MovimientosController.registrarEntradaMateria
 );
 
 router.post(
     "/actualizacion-materia",
-    verificarToken, verificarRol(["admin", "encargadocompras"]), MovimientosController.actualizacionMateria
+    verificarToken, verificarRol(["admin", "encargadotarimas"]), MovimientosController.actualizacionMateria
 );
 
 router.post(
     "/desactivacion-materia",
-    verificarToken, verificarRol(["admin", "encargadocompras"]), MovimientosController.desactivacionMateria
+    verificarToken, verificarRol(["admin", "encargadotarimas"]), MovimientosController.desactivacionMateria
 );
 
 router.post(
-    "/devolucion-materia", verificarToken, verificarRol(["admin", "encargadocompras"]), MovimientosController.devolucionMateria
+    "/devolucion-materia", verificarToken, verificarRol(["admin", "encargadotarimas"]), MovimientosController.devolucionMateria
 );
 
 //productos
