@@ -4,6 +4,7 @@ import { MovimientosServicio } from "../services/movimientos.servicio";
 import { validate } from "class-validator";
 import { MovimientosInventarioDto } from "../dtos/movimientos.dto";
 
+
 const movimientosServicio = new MovimientosServicio();
 
 export class MovimientosController {
@@ -46,6 +47,9 @@ export class MovimientosController {
     static async desactivacionMateria(req: Request, res: Response) {
         await MovimientosController.registrarMov(req, res, "desactivacion");
     }
+    static async devolucionMateria(req: Request, res: Response) {
+        await MovimientosController.registrarMov(req, res, "devolucion");
+    }
 
     //productos
     static async registrarProductoTerm(req: Request, res: Response) {
@@ -63,4 +67,8 @@ export class MovimientosController {
     static async desactivacionProducto(req: Request, res: Response) {
         await MovimientosController.registrarMov(req, res, "desactivacion");
     }
+     static async devolucionProducto(req: Request, res: Response) {
+        await MovimientosController.registrarMov(req, res, "devolucion");
+    }
+    
 }

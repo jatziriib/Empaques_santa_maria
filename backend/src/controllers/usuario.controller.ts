@@ -21,7 +21,7 @@ export class UsuarioController {
   //Obtener usuario x id
   static async getById(req: Request, res: Response) {
     const id_usuario = Number(req.params.id_usuario);
-    if (isNaN(id_usuario)) return res.status(400).json({ message: "ID inválido" });
+    if (isNaN(id_usuario)) return res.status(400).json({ message: "id inválido" });
 
     try {
       const usuario = await usuarioServicio.getById(id_usuario);

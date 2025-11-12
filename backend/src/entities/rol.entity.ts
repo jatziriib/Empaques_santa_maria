@@ -11,7 +11,7 @@ export class Rol {
         type: "enum",
         enum: [
             "admin",
-            "encargadotarimas",
+            "encargadotarimas", 
             "encargadocompras"
         ],
     })

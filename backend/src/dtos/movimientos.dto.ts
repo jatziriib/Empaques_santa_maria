@@ -6,7 +6,8 @@ export class MovimientosInventarioDto {
         "salida_producto_terminado",
         "registro_producto terminado",
         "actualizacion",
-        "eliminacion"
+        "eliminacion",
+        "devolucion"
     ])
     tipo_movimiento: string;
 
