@@ -9,32 +9,29 @@ import nodemailer from "nodemailer";
 
 
 
-//otp en cache
+//tipo OTP
 type OTP = {
   otp: string;
   expira: number;
-}
-
-const otpn = new Map<String, OTP>();//es como un objeto
+};
 
 export class AuthServicio {
   private usrRepositorio = AppDataSource.getRepository(Usuario);
   private rolRepositorio = AppDataSource.getRepository(Rol);
 
-  //Registrar usuario
+  //OTP en cache, esta como propiedad de la clase
+  private otpn = new Map<string, OTP>();
+
+  //registro
   async registrar(data: DtoRegistro): Promise<Usuario> {
-    //ver si el correo ya existe
     const existe = await this.usrRepositorio.findOneBy({ correo: data.correo });
     if (existe) throw new Error("El correo ya está registrado");
 
-    //buscar rol en bd
     const rol = await this.rolRepositorio.findOneBy({ nombre: data.rol });
     if (!rol) throw new Error("Rol no encontrado");
 
-    //hashear la contraseña
     const hashearContrasena = await bcrypt.hash(data.contrasena, 10);
 
-    //crear usuario
     const usuario = this.usrRepositorio.create({
       nombre: data.nombre,
       apellidos: data.apellidos,
@@ -46,7 +43,7 @@ export class AuthServicio {
     return this.usrRepositorio.save(usuario);
   }
 
-  //iniciar sesion
+  //login
   async login(data: LoginDto): Promise<{ token: string }> {
     const usuario = await this.usrRepositorio.findOne({
       where: { correo: data.correo },
@@ -55,64 +52,60 @@ export class AuthServicio {
 
     if (!usuario) throw new Error("Credenciales inválidas");
 
-    //validar contrasena
     const contrasenaValida = await bcrypt.compare(data.contrasena, usuario.contrasena);
     if (!contrasenaValida) throw new Error("Credenciales inválidas");
 
-    //geberar el token
     const token = jwt.sign(
       { id: usuario.id_usuario, rol: usuario.rol.nombre },
       process.env.JWT_SECRET || "secretoo",
-      { expiresIn: "1h" } //1 hora para que expire
+      { expiresIn: "1h" }
     );
 
     return { token };
   }
 
-  //generar otp y se envia el correo
+  //generar OTP y enviar correo
   async enviarOtp(correo: string) {
-    const usuario = await this.usrRepositorio.findOneBy({ correo: correo });
+    const usuario = await this.usrRepositorio.findOneBy({ correo });
     if (!usuario) throw new Error("usr no encontrado");
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const expira = Date.now() + 10 * 60 * 1000; //en 10 minutos
-    otpn.set(correo, { otp, expira });
+    const expira = Date.now() + 10 * 60 * 1000; // 10 minutos
+    this.otpn.set(correo, { otp, expira });
 
-    //nodemailer
-    const transCorreos = nodemailer.createTransport({
+    const transport = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: Number(process.env.SMTP_PORT),
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    })
-    await transCorreos.sendMail({
+      auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+    });
+
+    await transport.sendMail({
       from: process.env.SMTP_USER,
       to: correo,
       subject: "Codigo para restablecer contraseña",
       text: `EL codigo es: ${otp}. Expira en 10 minutos.`,
     });
-
   }
-  //verificar codigo
+
+  //verificar OTP
   async verificarOtp(correo: string, otp: string): Promise<boolean> {
-    const entrada = otpn.get(correo);
+    const entrada = this.otpn.get(correo);
     if (!entrada) return false;
 
     if (Date.now() > entrada.expira) {
-      otpn.delete(correo);
+      this.otpn.delete(correo);
       return false;
     }
 
     if (entrada.otp !== otp) return false;
 
-    otpn.delete(correo); //otp usado
+    this.otpn.delete(correo); //OTP usado
     return true;
   }
+
   //restablecer contrasena
   async restablecerContrasena(correo: string, nueva_contrasena: string) {
-    const usuario = await this.usrRepositorio.findOneBy({ correo: correo });
+    const usuario = await this.usrRepositorio.findOneBy({ correo });
     if (!usuario) throw new Error("Usuario no encontrado");
 
     const hashed = await bcrypt.hash(nueva_contrasena, 10);
@@ -120,5 +113,4 @@ export class AuthServicio {
 
     return this.usrRepositorio.save(usuario);
   }
-
 }

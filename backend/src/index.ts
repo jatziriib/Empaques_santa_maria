@@ -9,6 +9,8 @@ import rutasMateriaPrima from "./routes/rutas.materiaprima";
 import rutasProductoTerminado from "./routes/rutas.productoterminado";
 import rutasMovimientos from "./routes/rutas.movimientos";
 
+
+
 const app = express();
 app.use(cors({
   origin:"*",

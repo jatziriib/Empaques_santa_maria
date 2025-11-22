@@ -48,7 +48,7 @@ export class UsuarioController {
       res.status(500).json({ message: "Error al crear usuario", error: err });
     }
   }
-  // Actualizar usuario
+  //Actualizar usuario
   static async update(req: Request, res: Response) {
     const id_usuario = Number(req.params.id_usuario);
     const dto = plainToClass(ActualizarUsuarioDto, req.body);
@@ -67,7 +67,7 @@ export class UsuarioController {
     }
   }
 
-  // Eliminar usuario
+  //eliminar usuario
   static async delete(req: Request, res: Response) {
     const id_usuario = Number(req.params.id_usuario);
     try {

@@ -2,18 +2,21 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany, Up
 import { Movimientos } from "./movimientos.entity";
 
 @Entity("productos_terminados")
-export class ProductosTerminados{
+export class ProductosTerminados {
 
     @PrimaryGeneratedColumn()
     id_producto_terminado: number;
-    
+
+    @Column({ type: "varchar", length: 50, nullable: false })
+    tarima: string;
+
     @Column({ type: "numeric", precision: 6, scale: 0, nullable: false })
     stock_actual: number;
 
     @Column({ type: "numeric", precision: 6, scale: 0, nullable: false })
     stock_minimo: number;
 
-    @Column({ type: "boolean", default: true})
+    @Column({ type: "boolean", default: true })
     activo: boolean;
 
     @CreateDateColumn({ type: 'timestamp' })

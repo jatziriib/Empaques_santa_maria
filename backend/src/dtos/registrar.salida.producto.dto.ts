@@ -7,4 +7,7 @@ export class RegistrarSalidaProductoDto {
 
   @IsInt({ message: "El id_usuario debe ser un número entero" })
   id_usuario: number;
+
+  @IsInt({ message: "El id_usuario debe ser un número entero" })
+  id_producto_terminado: number;
 }
