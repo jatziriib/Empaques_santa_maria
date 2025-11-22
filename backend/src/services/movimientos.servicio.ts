@@ -15,6 +15,7 @@ export class MovimientosServicio {
     private repoUsr = AppDataSource.getRepository(Usuario);
     private alertaServicio = new AlertasServicio();
 
+    //registrar un movimiento
     async registrar(data: MovimientosInventarioDto) {
         const movimiento = new Movimientos();
 
@@ -91,18 +92,12 @@ export class MovimientosServicio {
         }
 
         //devolver en el json
-        return {
-            mensaje: "Movimiento registrado correctamente",
-            movimiento: guardado,
-            alerta, //null o la alerta
-        };
+        return await this.repo.save(movimiento);
     }
-
+    //actualizar movimiento
     async actualizar(id_movimiento: number, data: MovimientosInventarioDto) {
         const movimiento = await this.repo.findOne({ where: { id_movimiento }, relations: ["materiaPrima", "productosTerminados"] });
         if (!movimiento) throw new Error("Movimiento no encontrado");
-
-
         //update de campos
         movimiento.tipo_movimiento = data.tipo_movimiento ?? movimiento.tipo_movimiento;
         movimiento.cantidad = data.cantidad ?? movimiento.cantidad;

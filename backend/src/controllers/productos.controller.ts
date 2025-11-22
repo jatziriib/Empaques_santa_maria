@@ -40,10 +40,13 @@ export class ProductoTerminadoController {
         }
 
         try {
-            const nuevaMateriaPrima = await productoTerminadoServicio.create(dto);
-            res.status(201).json(nuevaMateriaPrima);
-        } catch (err) {
-            res.status(500).json({ message: "Error al crear producto" });
+            const nuevaProducto = await productoTerminadoServicio.create(dto);
+            res.status(201).json(nuevaProducto);
+        } catch (err: any) {
+            res.status(500).json({
+                message: "Error al registrar el producto",
+                error: err.message
+            });
         }
     }
     //update producto
@@ -84,36 +87,6 @@ export class ProductoTerminadoController {
         } catch (err) {
             res.status(500).json({
                 message: "Error al desactivar el producto",
-                error: err,
-            });
-        }
-    }
-
-    //registrar prod que ya sale
-    static async registrarSalida(req: Request, res: Response) {
-        const id_producto_terminado = Number(req.params.id_producto_terminado);
-        const dto = plainToClass(RegistrarSalidaProductoDto, req.body);
-        const errores = await validate(dto);
-
-        if (isNaN(id_producto_terminado)) return res.status(400).json({ message: "id no válido" });
-        if (errores.length > 0) return res.status(400).json(errores);
-
-        try {
-            const producto = await productoTerminadoServicio.registrarSalida(
-                id_producto_terminado,
-                dto.cantidad,
-                dto.id_usuario
-            );
-
-            if (!producto) return res.status(404).json({ message: "Producto no encontrado" });
-
-            res.json({
-                message: "Salida registrada correctamente",
-                producto,
-            });
-        } catch (err) {
-            res.status(500).json({
-                message: err instanceof Error ? err.message : "Error al registrar salida del producto",
                 error: err,
             });
         }

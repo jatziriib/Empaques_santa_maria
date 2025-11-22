@@ -14,7 +14,6 @@ export class Movimientos {
         enum: [
             "entrada_materia",
             "salida_producto_terminado",
-            "registro_producto_terminado",
             "actualizacion",
             "desactivacion",
             "devolucion",

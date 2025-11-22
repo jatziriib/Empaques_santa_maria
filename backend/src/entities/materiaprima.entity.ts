@@ -6,14 +6,23 @@ export class MateriaPrima {
 
     @PrimaryGeneratedColumn()
     id_materia_prima: number;
-    
+
+    @Column({ type: "varchar", length: 50, nullable: false })
+    tipo: string; 
+
+    @Column({ type: "numeric", precision: 6, scale: 2, nullable: false })
+    ancho: number; 
+
+    @Column({ type: "numeric", precision: 6, scale: 2, nullable: false })
+    largo: number; 
+
     @Column({ type: "numeric", precision: 6, scale: 0, nullable: false })
     stock_actual: number;
 
     @Column({ type: "numeric", precision: 6, scale: 0, nullable: false })
     stock_minimo: number;
 
-    @Column({ type: "boolean", default: true})
+    @Column({ type: "boolean", default: true })
     activo: boolean;
 
     @CreateDateColumn({ type: 'timestamp' })
