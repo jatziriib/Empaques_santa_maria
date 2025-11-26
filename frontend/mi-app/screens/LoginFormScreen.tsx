@@ -48,10 +48,7 @@ export default function LoginFormScreen({ navigation }: any) {
         <Text style={styles.buttonText}>Iniciar Sesión</Text>
       </TouchableOpacity>
 
-      {/* 🔹 Enlace al registro */}
-      <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-        <Text style={styles.link}>¿No tienes cuenta?</Text>
-      </TouchableOpacity>
+      
     </View>
   );
 }

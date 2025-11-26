@@ -17,12 +17,7 @@ export default function LoginScreen({ navigation }: Props) {
         <Text style={styles.loginText}>Iniciar Sesión</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.registerButton}
-        onPress={() => navigation.navigate("Register")}
-      >
-        <Text style={styles.registerText}>Registrarse</Text>
-      </TouchableOpacity>
+    
     </View>
   );
 }
