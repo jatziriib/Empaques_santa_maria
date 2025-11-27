@@ -7,6 +7,7 @@ import SplashScreen from "../screens/SplashScreen";
 import LoginScreen from "../screens/LoginScreen";
 import LoginFormScreen from "../screens/LoginFormScreen";
 import RegisterScreen from "../screens/RegisterScreen";
+<<<<<<< HEAD
 
 // Productos
 import CreateProductScreen from "../screens/Products/CreateProductScreen";
@@ -23,12 +24,19 @@ import EditUserScreen from "../screens/Users/EditUserScreen";
 
 // Drawer principal
 import DrawerNavigator from "./DrawerNavigator";
+=======
+import ResumenScreen from "../screens/ResumenScreen";
+import RecuperarContrasena from "../screens/RecuperarContrasenaScreen";
+
+
+>>>>>>> d6391ffc46b0e350440fa3b9492f342944786e0d
 
 export type RootStackParamList = {
   Splash: undefined;
   Login: undefined;
   LoginForm: undefined;
   Register: undefined;
+<<<<<<< HEAD
   Home: undefined;
 
   // Productos
@@ -41,6 +49,10 @@ export type RootStackParamList = {
   // Usuarios
   CreateUser: undefined;
   EditUser: { user: any };
+=======
+  Resumen: undefined;
+   RecuperarContrasena: undefined;
+>>>>>>> d6391ffc46b0e350440fa3b9492f342944786e0d
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -57,6 +69,7 @@ export default function AppNavigator() {
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="LoginForm" component={LoginFormScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
+<<<<<<< HEAD
 
         {/* Productos */}
         <Stack.Screen name="CreateProduct" component={CreateProductScreen} />
@@ -73,6 +86,10 @@ export default function AppNavigator() {
 
         {/* Drawer (Resumen, Usuarios, Productos, Materia, Movimientos) */}
         <Stack.Screen name="Home" component={DrawerNavigator} />
+=======
+        <Stack.Screen name="Resumen" component={ResumenScreen} />
+         <Stack.Screen name="RecuperarContrasena" component={RecuperarContrasena} />
+>>>>>>> d6391ffc46b0e350440fa3b9492f342944786e0d
       </Stack.Navigator>
     </NavigationContainer>
   );
