@@ -13,7 +13,7 @@ export default function LoginScreen({ navigation }: Props) {
 
       <TouchableOpacity
         style={styles.loginButton}
-        onPress={() => navigation.navigate("LoginForm")}
+        onPress={() => navigation.navigate("Home")}
       >
         <Text style={styles.loginText}>Iniciar Sesión</Text>
       </TouchableOpacity>
