@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+// screens/Materials/EditMaterialScreen.tsx
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -13,22 +14,22 @@ import { Ionicons } from "@expo/vector-icons";
 export default function EditMaterialScreen({ route, navigation }: any) {
   const { material } = route.params;
 
-  // Estados con valores iniciales del material
-  const [type, setType] = useState(material?.type || "");
-  const [width, setWidth] = useState(material?.width?.toString() || "");
-  const [height, setHeight] = useState(material?.height?.toString() || "");
-  const [status, setStatus] = useState(material?.status || "");
-  const [stock, setStock] = useState(material?.stock?.toString() || "");
+  const [tipo, setTipo] = useState(material?.tipo || "");
+  const [ancho, setAncho] = useState(material?.ancho?.toString() || "");
+  const [largo, setLargo] = useState(material?.largo?.toString() || "");
+  const [stockActual, setStockActual] = useState(material?.stockActual?.toString() || "");
+  const [stockMinimo, setStockMinimo] = useState(material?.stockMinimo?.toString() || "");
 
   const handleUpdate = () => {
-    // Aquí luego haces tu PUT o PATCH al backend
-    console.log("Actualizando:", {
-      type,
-      width,
-      height,
-      status,
-      stock,
+    console.log("Actualizando materia prima:", {
+      tipo,
+      ancho,
+      largo,
+      stockActual,
+      stockMinimo,
     });
+
+    // Aquí va tu PUT al backend...
 
     navigation.goBack();
   };
@@ -37,7 +38,7 @@ export default function EditMaterialScreen({ route, navigation }: any) {
     <ScrollView style={styles.container}>
       {/* Botón atrás */}
       <TouchableOpacity onPress={() => navigation.goBack()}>
-        <Ionicons name="chevron-back" size={28} color="#000" />
+        <Ionicons name="chevron-back" size={30} color="#000" />
       </TouchableOpacity>
 
       {/* Logo */}
@@ -49,120 +50,107 @@ export default function EditMaterialScreen({ route, navigation }: any) {
         />
       </View>
 
-      {/* Campos */}
-      <View style={styles.row}>
-        <View style={styles.field}>
-          <Text style={styles.label}>Tipo</Text>
-          <TextInput
-            style={styles.input}
-            value={type}
-            onChangeText={setType}
-          />
-        </View>
+      {/* Tipo */}
+      <Text style={styles.label}>Tipo</Text>
+      <TextInput
+        style={styles.input}
+        value={tipo}
+        onChangeText={setTipo}
+        placeholder="Tipo de material"
+      />
 
-        <View style={styles.field}>
+      {/* Ancho / Largo */}
+      <View style={styles.row}>
+        <View style={{ flex: 1, marginRight: 8 }}>
           <Text style={styles.label}>Ancho</Text>
           <TextInput
             style={styles.input}
-            value={width}
-            onChangeText={setWidth}
+            value={ancho}
+            onChangeText={setAncho}
             keyboardType="numeric"
+            placeholder="Ancho"
           />
         </View>
-      </View>
 
-      <View style={styles.row}>
-        <View style={styles.field}>
+        <View style={{ flex: 1 }}>
           <Text style={styles.label}>Largo</Text>
           <TextInput
             style={styles.input}
-            value={height}
-            onChangeText={setHeight}
+            value={largo}
+            onChangeText={setLargo}
             keyboardType="numeric"
-          />
-        </View>
-
-        <View style={styles.field}>
-          <Text style={styles.label}>Activo</Text>
-          <TextInput
-            style={styles.input}
-            value={status}
-            onChangeText={setStatus}
+            placeholder="Largo"
           />
         </View>
       </View>
 
-      <View style={styles.field}>
-        <Text style={styles.label}>Stock</Text>
-        <TextInput
-          style={styles.input}
-          value={stock}
-          onChangeText={setStock}
-          keyboardType="numeric"
-        />
-      </View>
+      {/* Stock Actual */}
+      <Text style={styles.label}>Stock Actual*</Text>
+      <TextInput
+        style={styles.input}
+        value={stockActual}
+        onChangeText={setStockActual}
+        keyboardType="numeric"
+        placeholder="Cantidad actual"
+      />
+
+      {/* Stock Mínimo */}
+      <Text style={styles.label}>Stock Mínimo*</Text>
+      <TextInput
+        style={styles.input}
+        value={stockMinimo}
+        onChangeText={setStockMinimo}
+        keyboardType="numeric"
+        placeholder="Cantidad mínima"
+      />
 
       {/* Botón actualizar */}
       <TouchableOpacity style={styles.button} onPress={handleUpdate}>
-        <Text style={styles.buttonText}>Actualizar</Text>
+        <Text style={styles.buttonText}>Actualizar Materia</Text>
       </TouchableOpacity>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    padding: 16,
-  },
+  container: { flex: 1, backgroundColor: "#fff", padding: 16 },
 
-  logoContainer: {
-    alignItems: "center",
-    marginVertical: 16,
-  },
-
-  logo: {
-    width: 200,
-    height: 80,
-  },
-
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-
-  field: {
-    flex: 1,
-    marginRight: 8,
-    marginBottom: 16,
-  },
+  logoContainer: { alignItems: "center", marginVertical: 10 },
+  logo: { width: 250, height: 80 },
 
   label: {
+    marginTop: 12,
     marginBottom: 4,
     fontWeight: "600",
+    fontSize: 15,
   },
 
   input: {
     borderWidth: 1,
-    borderColor: "#e0e0e0",
+    borderColor: "#DDD",
     borderRadius: 10,
-    padding: 10,
+    padding: 12,
+    fontSize: 14,
     backgroundColor: "#fff",
+  },
+
+  row: {
+    flexDirection: "row",
+    marginTop: 12,
   },
 
   button: {
     backgroundColor: "#0F6B35",
-    padding: 16,
+    paddingVertical: 16,
     borderRadius: 10,
-    marginTop: 20,
     alignItems: "center",
+    marginTop: 25,
     marginBottom: 40,
   },
 
   buttonText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: "600",
   },
 });

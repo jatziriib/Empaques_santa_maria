@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../navigation/AppNavigator";
-
 import { useNavigation } from "@react-navigation/native";
+
 import {
   View,
   Text,
@@ -11,36 +11,47 @@ import {
   FlatList,
   Modal,
   StyleSheet,
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function ProductsListScreen() {
-const navigation = useNavigation<NavigationProp>();
+  const navigation = useNavigation<NavigationProp>();
 
-
-  // --- Estados de filtros ---
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("");
-  const [status, setStatus] = useState("");
 
-  // --- Lista temporal de productos ---
+  // --- Lista simulada con stock mínimo ---
   const [products, setProducts] = useState([
     {
       id: "1",
-      name: "Madera",
-      status: "Activo",
+      name: "Tarima de madera",
       stock: 5,
-      category: "Prima",
+      minStock: 2,
     },
     {
       id: "2",
-      name: "Cartón",
-      status: "Activo",
-      stock: 3,
-      category: "Empaque",
+      name: "Tarima de cartón",
+      stock: 1,
+      minStock: 2,
     },
   ]);
+
+  // --- ALERTA AUTOMÁTICA DE STOCK BAJO ---
+  useEffect(() => {
+    const bajos = products.filter((p) => p.stock <= p.minStock);
+
+    if (bajos.length > 0) {
+      let nombres = bajos.map((p) => `• ${p.name}`).join("\n");
+
+      Alert.alert(
+        "⚠️ Stock bajo",
+        `Los siguientes productos han alcanzado el mínimo:\n\n${nombres}`,
+        [{ text: "Entendido", style: "default" }]
+      );
+    }
+  }, []);
 
   // Modal eliminar
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
@@ -52,25 +63,30 @@ const navigation = useNavigation<NavigationProp>();
   };
 
   const handleDelete = () => {
-    setProducts((prev) =>
-      prev.filter((item) => item.id !== selectedProduct.id)
-    );
+    setProducts((prev) => prev.filter((item) => item.id !== selectedProduct.id));
     setDeleteModalVisible(false);
   };
 
-  // Render fila
+  // --- Render de cada fila ---
   const renderProduct = ({ item }: any) => (
     <View style={styles.row}>
       <Text style={styles.cell}>{item.name}</Text>
 
-      <View style={styles.statusChip}>
-        <Text style={styles.statusText}>{item.status}</Text>
-      </View>
+      {/* CHIP DE STATUS SEGÚN STOCK */}
+      {item.stock <= item.minStock ? (
+        <View style={[styles.statusChip, { backgroundColor: "#B00020" }]}>
+          <Text style={styles.statusText}>Stock bajo</Text>
+        </View>
+      ) : (
+        <View style={[styles.statusChip, { backgroundColor: "#0F6B35" }]}>
+          <Text style={styles.statusText}>En stock</Text>
+        </View>
+      )}
 
       <Text style={styles.cell}>{item.stock} en existencia</Text>
-      <Text style={styles.cell}>{item.category}</Text>
+      <Text style={styles.cell}>{item.minStock} mínimo</Text>
 
-      {/* Botón editar */}
+      {/* EDITAR */}
       <TouchableOpacity
         style={styles.editBtn}
         onPress={() => navigation.navigate("EditProduct", { product: item })}
@@ -78,7 +94,7 @@ const navigation = useNavigation<NavigationProp>();
         <Text style={styles.editText}>Editar</Text>
       </TouchableOpacity>
 
-      {/* Botón borrar */}
+      {/* BORRAR */}
       <TouchableOpacity onPress={() => openDeleteModal(item)}>
         <Ionicons name="trash-outline" size={22} color="#0F6B35" />
       </TouchableOpacity>
@@ -87,7 +103,7 @@ const navigation = useNavigation<NavigationProp>();
 
   return (
     <View style={styles.container}>
-      {/* ---------- BARRA DE FILTROS ---------- */}
+      {/* --- Filtro búsqueda --- */}
       <View style={styles.filterContainer}>
         <View style={styles.filterBox}>
           <Ionicons name="search-outline" size={18} color="#555" />
@@ -98,35 +114,25 @@ const navigation = useNavigation<NavigationProp>();
             onChangeText={setSearch}
           />
         </View>
-
-        <TouchableOpacity style={styles.filterBox}>
-          <Text style={styles.filterPlaceholder}>Categoría</Text>
-          <Ionicons name="chevron-down" size={18} color="#555" />
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.filterBox}>
-          <Text style={styles.filterPlaceholder}>Status</Text>
-          <Ionicons name="chevron-down" size={18} color="#555" />
-        </TouchableOpacity>
       </View>
 
-      {/* ---------- ENCABEZADOS ---------- */}
+      {/* Encabezado */}
       <View style={styles.tableHeader}>
         <Text style={styles.headerText}>Producto</Text>
         <Text style={styles.headerText}>Status</Text>
         <Text style={styles.headerText}>Inventario</Text>
-        <Text style={styles.headerText}>Categoría</Text>
+        <Text style={styles.headerText}>Mínimo</Text>
         <Text style={styles.headerText}></Text>
       </View>
 
-      {/* ---------- LISTA ---------- */}
+      {/* Lista */}
       <FlatList
         data={products}
         keyExtractor={(item) => item.id}
         renderItem={renderProduct}
       />
 
-      {/* ---------- BOTÓN CREAR PRODUCTO ---------- */}
+      {/* Botón crear */}
       <TouchableOpacity
         style={styles.createBtn}
         onPress={() => navigation.navigate("CreateProduct")}
@@ -134,15 +140,13 @@ const navigation = useNavigation<NavigationProp>();
         <Text style={styles.createBtnText}>Crear producto</Text>
       </TouchableOpacity>
 
-      {/* ---------- MODAL ELIMINAR ---------- */}
+      {/* Modal eliminar */}
       <Modal transparent visible={deleteModalVisible} animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <Ionicons name="trash-outline" size={80} color="#0F6B35" />
 
-            <Text style={styles.modalText}>
-              ¿Seguro de eliminar este producto?
-            </Text>
+            <Text style={styles.modalText}>¿Seguro de eliminar este producto?</Text>
 
             <View style={styles.modalButtons}>
               <TouchableOpacity
@@ -163,8 +167,7 @@ const navigation = useNavigation<NavigationProp>();
   );
 }
 
-// ----------------------------------------------------------------------
-
+/* --- ESTILOS ORIGINALES (MANTENIDOS) --- */
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -172,7 +175,6 @@ const styles = StyleSheet.create({
     padding: 16,
   },
 
-  // Filtros
   filterContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -194,12 +196,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 
-  filterPlaceholder: {
-    flex: 1,
-    color: "#555",
-  },
-
-  // Tabla
   tableHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -226,7 +222,6 @@ const styles = StyleSheet.create({
   },
 
   statusChip: {
-    backgroundColor: "#0F6B35",
     paddingVertical: 4,
     paddingHorizontal: 12,
     borderRadius: 20,
@@ -250,7 +245,6 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
 
-  // Crear producto
   createBtn: {
     backgroundColor: "#0F6B35",
     padding: 14,
@@ -265,7 +259,6 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 
-  // Modal
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.4)",
@@ -321,4 +314,3 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 });
-

@@ -1,94 +1,74 @@
-import React from "react";
-import { View, Text, ScrollView, Dimensions, StyleSheet } from "react-native";
-// @ts-ignore
-import { BarChart } from "react-native-chart-kit";
+import React, { useEffect, useState } from "react";
+import { View, Text, ScrollView, StyleSheet } from "react-native";
 
+export default function ResumenScreen() {
+  // --- Datos simulados ---
+  const [products, setProducts] = useState([
+    { id: 1, name: "Tarima de madera", stock: 2, minStock: 3 },
+    { id: 2, name: "Tarima de cartón", stock: 5, minStock: 2 },
+    { id: 3, name: "Tarima azul", stock: 1, minStock: 2 },
+  ]);
 
-type BarChartPropsFix = {
-  data: {
-    labels: string[];
-    datasets: { data: number[] }[];
-  };
-  width: number;
-  height: number;
-  chartConfig: any;
-  style?: any;
-  fromZero?: boolean;
-};
+  const [materials, setMaterials] = useState([
+    { id: 1, name: "Clavos", stock: 10, minStock: 5 },
+    { id: 2, name: "Pegamento", stock: 3, minStock: 5 },
+    { id: 3, name: "Madera", stock: 1, minStock: 3 },
+  ]);
 
-const TypedBarChart = BarChart as unknown as React.FC<Partial<BarChartPropsFix>>;
-const screenWidth = Dimensions.get("window").width;
-
-const chartConfig = {
-  backgroundGradientFrom: "#fff",
-  backgroundGradientTo: "#fff",
-  color: (opacity = 1) => `rgba(0, 123, 255, ${opacity})`,
-  barPercentage: 0.6,
-  decimalPlaces: 0,
-  propsForBackgroundLines: {
-    strokeDasharray: "", // quita las líneas punteadas
-  },
-};
-
-const Resumen = () => {
-  const data = {
-    labels: ["Apr 4", "Apr 9", "Apr 15", "Apr 21", "Apr 27"],
-    datasets: [
-      {
-        data: [40, 55, 30, 60, 75, 50, 80],
-      },
-    ],
-  };
-
-  const topProductos = [
-    { nombre: "Nombre del producto", categoria: "Categoría", existencia: 423 },
-    { nombre: "Nombre del producto", categoria: "Categoría", existencia: 423 },
-    { nombre: "Nombre del producto", categoria: "Categoría", existencia: 423 },
-    { nombre: "Nombre del producto", categoria: "Categoría", existencia: 423 },
-  ];
+  // Filtrar productos y materia prima en mínimo
+  const productosEnMinimo = products.filter((p) => p.stock <= p.minStock);
+  const materialesEnMinimo = materials.filter((m) => m.stock <= m.minStock);
 
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Resumen</Text>
 
-      {/* Tarjeta de resumen */}
+      {/* --- PRODUCTOS EN MÍNIMO --- */}
       <View style={styles.card}>
-        <Text style={styles.cardTitle}>Entrada de materia prima</Text>
-        <Text style={styles.cardValue}>1,720</Text>
-        <Text style={styles.cardPercent}>▲ 10.7%</Text>
-      </View>
+        <Text style={styles.sectionTitle}>Productos en mínimo</Text>
 
-      {/* Gráfico */}
-      <View style={styles.chartContainer}>
-        <TypedBarChart
-          data={data}
-          width={screenWidth - 40}
-          height={220}
-          chartConfig={chartConfig}
-          fromZero
-          style={styles.chart}
-        />
-        <Text style={styles.chartLabel}>Materia prima</Text>
-      </View>
+        {productosEnMinimo.length === 0 ? (
+          <Text style={styles.emptyText}>No hay productos en mínimo</Text>
+        ) : (
+          productosEnMinimo.map((item) => (
+            <View key={item.id} style={styles.row}>
+              <View>
+                <Text style={styles.name}>{item.name}</Text>
+                <Text style={styles.subText}>
+                  Stock: {item.stock} | Mínimo: {item.minStock}
+                </Text>
+              </View>
 
-      {/* Lista de productos */}
-      <View style={styles.listCard}>
-        <Text style={styles.sectionTitle}>Top productos del mes</Text>
-        {topProductos.map((item, index) => (
-          <View key={index} style={styles.productRow}>
-            <View>
-              <Text style={styles.productName}>{item.nombre}</Text>
-              <Text style={styles.productCategory}>{item.categoria}</Text>
+              <Text style={styles.alertTag}>Bajo</Text>
             </View>
-            <Text style={styles.productExistencia}>{item.existencia}</Text>
-          </View>
-        ))}
+          ))
+        )}
+      </View>
+
+      {/* --- MATERIA PRIMA EN MÍNIMO --- */}
+      <View style={styles.card}>
+        <Text style={styles.sectionTitle}>Materia prima en mínimo</Text>
+
+        {materialesEnMinimo.length === 0 ? (
+          <Text style={styles.emptyText}>No hay materia prima en mínimo</Text>
+        ) : (
+          materialesEnMinimo.map((item) => (
+            <View key={item.id} style={styles.row}>
+              <View>
+                <Text style={styles.name}>{item.name}</Text>
+                <Text style={styles.subText}>
+                  Stock: {item.stock} | Mínimo: {item.minStock}
+                </Text>
+              </View>
+
+              <Text style={styles.alertTag}>Bajo</Text>
+            </View>
+          ))
+        )}
       </View>
     </ScrollView>
   );
-};
-
-export default Resumen;
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -96,78 +76,61 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: 20,
   },
+
   title: {
     fontSize: 28,
     fontWeight: "700",
-    marginBottom: 16,
+    marginBottom: 20,
   },
+
   card: {
     backgroundColor: "#fff",
-    borderRadius: 16,
     padding: 16,
+    borderRadius: 16,
+    marginBottom: 20,
     shadowColor: "#000",
     shadowOpacity: 0.05,
     shadowRadius: 5,
-    elevation: 3,
-    marginBottom: 20,
+    elevation: 2,
   },
-  cardTitle: {
-    fontSize: 14,
-    color: "#666",
-  },
-  cardValue: {
-    fontSize: 32,
-    fontWeight: "700",
-    marginVertical: 8,
-  },
-  cardPercent: {
-    color: "#28a745",
-    fontWeight: "600",
-  },
-  chartContainer: {
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  chart: {
-    borderRadius: 16,
-  },
-  chartLabel: {
-    textAlign: "center",
-    fontSize: 14,
-    color: "#444",
-    marginTop: 8,
-  },
-  listCard: {
-    backgroundColor: "#fff",
-    borderRadius: 16,
-    padding: 16,
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowRadius: 5,
-    elevation: 3,
-  },
+
   sectionTitle: {
     fontSize: 18,
     fontWeight: "600",
     marginBottom: 10,
   },
-  productRow: {
+
+  emptyText: {
+    fontSize: 14,
+    color: "#777",
+    marginTop: 5,
+  },
+
+  row: {
     flexDirection: "row",
     justifyContent: "space-between",
-    borderBottomColor: "#eee",
+    paddingVertical: 10,
     borderBottomWidth: 1,
-    paddingVertical: 8,
+    borderBottomColor: "#eee",
   },
-  productName: {
-    fontSize: 14,
+
+  name: {
+    fontSize: 16,
     fontWeight: "500",
   },
-  productCategory: {
-    fontSize: 12,
-    color: "#999",
+
+  subText: {
+    fontSize: 13,
+    color: "#777",
   },
-  productExistencia: {
-    fontSize: 14,
+
+  alertTag: {
+    backgroundColor: "#B00020",
+    color: "#fff",
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    borderRadius: 12,
     fontWeight: "600",
+    alignSelf: "center",
   },
 });

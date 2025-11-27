@@ -10,6 +10,7 @@ import {
   Image,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { Picker } from "@react-native-picker/picker";
 
 export default function CreateMovementScreen({ navigation }: any) {
   const [tipo, setTipo] = useState("");
@@ -17,10 +18,17 @@ export default function CreateMovementScreen({ navigation }: any) {
   const [usuario, setUsuario] = useState("");
   const [materiaPrima, setMateriaPrima] = useState("");
   const [productoTerminado, setProductoTerminado] = useState("");
-  const [fecha, setFecha] = useState("");
 
   const handleCreate = () => {
     // Aquí luego haces el POST al backend
+    console.log({
+      tipo,
+      cantidad,
+      usuario,
+      materiaPrima,
+      productoTerminado,
+    });
+
     navigation.goBack();
   };
 
@@ -38,21 +46,25 @@ export default function CreateMovementScreen({ navigation }: any) {
         />
       </View>
 
-      <Text style={styles.label}>Tipo de movimiento (Entrada/Salida)</Text>
-      <TextInput
-        style={styles.input}
-        value={tipo}
-        onChangeText={setTipo}
-      />
+      {/* SELECT TIPO DE MOVIMIENTO */}
+      <Text style={styles.label}>Tipo de movimiento*</Text>
+      <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={tipo}
+          onValueChange={(value) => setTipo(value)}
+        >
+          <Picker.Item label="Seleccionar..." value="" />
+          <Picker.Item label="Entrada de materia" value="entrada_materia" />
+          <Picker.Item label="Salida producto terminado" value="salida_producto" />
+          <Picker.Item label="Actualización" value="actualizacion" />
+          <Picker.Item label="Eliminación" value="eliminacion" />
+          <Picker.Item label="Devolución" value="devolucion" />
+        </Picker>
+      </View>
 
-      <Text style={styles.label}>Cantidad</Text>
-      <TextInput
-        style={styles.input}
-        value={cantidad}
-        onChangeText={setCantidad}
-        keyboardType="numeric"
-      />
+      {/* FORMULARIO DINÁMICO */}
 
+      {/* Usuario */}
       <Text style={styles.label}>Usuario</Text>
       <TextInput
         style={styles.input}
@@ -60,46 +72,132 @@ export default function CreateMovementScreen({ navigation }: any) {
         onChangeText={setUsuario}
       />
 
-      <Text style={styles.label}>Materia prima (opcional)</Text>
-      <TextInput
-        style={styles.input}
-        value={materiaPrima}
-        onChangeText={setMateriaPrima}
-      />
+      {/* Entrada de materia */}
+      {tipo === "entrada_materia" && (
+        <>
+          <Text style={styles.label}>Materia prima*</Text>
+          <TextInput
+            style={styles.input}
+            value={materiaPrima}
+            onChangeText={setMateriaPrima}
+          />
 
-      <Text style={styles.label}>Producto terminado (opcional)</Text>
-      <TextInput
-        style={styles.input}
-        value={productoTerminado}
-        onChangeText={setProductoTerminado}
-      />
+          <Text style={styles.label}>Cantidad*</Text>
+          <TextInput
+            style={styles.input}
+            value={cantidad}
+            onChangeText={setCantidad}
+            keyboardType="numeric"
+          />
+        </>
+      )}
 
-      <Text style={styles.label}>Fecha (YYYY-MM-DD HH:mm)</Text>
-      <TextInput
-        style={styles.input}
-        value={fecha}
-        onChangeText={setFecha}
-      />
+      {/* Salida producto terminado */}
+      {tipo === "salida_producto" && (
+        <>
+          <Text style={styles.label}>Producto terminado*</Text>
+          <TextInput
+            style={styles.input}
+            value={productoTerminado}
+            onChangeText={setProductoTerminado}
+          />
 
-      <TouchableOpacity style={styles.button} onPress={handleCreate}>
+          <Text style={styles.label}>Cantidad*</Text>
+          <TextInput
+            style={styles.input}
+            value={cantidad}
+            onChangeText={setCantidad}
+            keyboardType="numeric"
+          />
+        </>
+      )}
+
+      {/* Actualización */}
+      {tipo === "actualizacion" && (
+        <>
+          <Text style={styles.label}>Materia prima o producto*</Text>
+          <TextInput
+            style={styles.input}
+            value={materiaPrima}
+            onChangeText={setMateriaPrima}
+            placeholder="Nombre"
+          />
+
+          <Text style={styles.label}>Cantidad*</Text>
+          <TextInput
+            style={styles.input}
+            value={cantidad}
+            onChangeText={setCantidad}
+            keyboardType="numeric"
+          />
+        </>
+      )}
+
+      {/* Eliminación */}
+      {tipo === "eliminacion" && (
+        <>
+          <Text style={styles.label}>Elemento a eliminar*</Text>
+          <TextInput
+            style={styles.input}
+            value={materiaPrima}
+            onChangeText={setMateriaPrima}
+            placeholder="Materia prima o producto"
+          />
+        </>
+      )}
+
+      {/* Devolución */}
+      {tipo === "devolucion" && (
+        <>
+          <Text style={styles.label}>Producto o materia*</Text>
+          <TextInput
+            style={styles.input}
+            value={productoTerminado}
+            onChangeText={setProductoTerminado}
+          />
+
+          <Text style={styles.label}>Cantidad devuelta*</Text>
+          <TextInput
+            style={styles.input}
+            value={cantidad}
+            onChangeText={setCantidad}
+            keyboardType="numeric"
+          />
+        </>
+      )}
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handleCreate}
+        disabled={tipo === ""}
+      >
         <Text style={styles.buttonText}>Crear movimiento</Text>
       </TouchableOpacity>
     </ScrollView>
   );
 }
 
+/* ================= ESTILOS ================= */
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff", padding: 16 },
   logoContainer: { alignItems: "center", marginVertical: 16 },
   logo: { width: 220, height: 80 },
 
-  label: { marginTop: 10, marginBottom: 4, fontWeight: "600" },
+  label: { marginTop: 12, marginBottom: 4, fontWeight: "600" },
+
   input: {
     borderWidth: 1,
     borderColor: "#e0e0e0",
     borderRadius: 10,
     padding: 10,
     backgroundColor: "#fff",
+  },
+
+  pickerContainer: {
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
+    borderRadius: 10,
+    marginBottom: 10,
   },
 
   button: {
@@ -110,5 +208,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 40,
   },
+
   buttonText: { color: "#fff", fontSize: 16, fontWeight: "600" },
 });

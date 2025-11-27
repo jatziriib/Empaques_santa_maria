@@ -20,12 +20,11 @@ export default function MovementsScreens() {
   const navigation = useNavigation<NavigationProp>();
 
   const [search, setSearch] = useState("");
-  const [typeFilter, setTypeFilter] = useState("");
 
   const [movements, setMovements] = useState([
     {
       id_movimiento: "1",
-      tipo_movimiento: "Entrada",
+      tipo_movimiento: "Entrada de materia",
       cantidad: 10,
       usuario: "Lluvia",
       materia_prima: "Madera",
@@ -34,9 +33,9 @@ export default function MovementsScreens() {
     },
     {
       id_movimiento: "2",
-      tipo_movimiento: "Salida",
+      tipo_movimiento: "Salida producto terminado",
       cantidad: 5,
-      usuario: "Fatima",
+      usuario: "Fátima",
       materia_prima: "",
       producto_terminado: "Caja",
       fecha_movimiento: "2024-05-02 15:30",
@@ -60,14 +59,21 @@ export default function MovementsScreens() {
 
   const renderMovement = ({ item }: any) => (
     <View style={styles.row}>
-      <Text style={styles.cell}>{item.tipo_movimiento}</Text>
+      {/* Tipo de movimiento con chip */}
+      <View style={[styles.statusChip]}>
+        <Text style={styles.statusText}>{item.tipo_movimiento}</Text>
+      </View>
+
       <Text style={styles.cell}>{item.cantidad}</Text>
       <Text style={styles.cell}>{item.usuario}</Text>
+
       <Text style={styles.cell}>
         {item.materia_prima || item.producto_terminado}
       </Text>
+
       <Text style={styles.cellSmall}>{item.fecha_movimiento}</Text>
 
+      {/* Botón Editar */}
       <TouchableOpacity
         style={styles.editBtn}
         onPress={() => navigation.navigate("EditMovement", { movement: item })}
@@ -75,6 +81,7 @@ export default function MovementsScreens() {
         <Text style={styles.editText}>Editar</Text>
       </TouchableOpacity>
 
+      {/* Botón eliminar */}
       <TouchableOpacity onPress={() => openDeleteModal(item)}>
         <Ionicons name="trash-outline" size={22} color="#0F6B35" />
       </TouchableOpacity>
@@ -104,7 +111,7 @@ export default function MovementsScreens() {
       {/* ENCABEZADOS */}
       <View style={styles.tableHeader}>
         <Text style={styles.headerText}>Tipo</Text>
-        <Text style={styles.headerText}>Cantidad</Text>
+        <Text style={styles.headerText}>Cant.</Text>
         <Text style={styles.headerText}>Usuario</Text>
         <Text style={styles.headerText}>Materia/Prod.</Text>
         <Text style={styles.headerText}>Fecha</Text>
@@ -118,7 +125,7 @@ export default function MovementsScreens() {
         renderItem={renderMovement}
       />
 
-      {/* BOTÓN CREAR */}
+      {/* BOTÓN CREAR MOVIMIENTO */}
       <TouchableOpacity
         style={styles.createBtn}
         onPress={() => navigation.navigate("CreateMovement")}
@@ -131,11 +138,13 @@ export default function MovementsScreens() {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <Ionicons name="trash-outline" size={80} color="#0F6B35" />
+
             <Text style={styles.modalText}>
               ¿Seguro de eliminar este movimiento?
             </Text>
 
             <View style={styles.modalButtons}>
+              {/* Cancelar */}
               <TouchableOpacity
                 style={styles.cancelBtn}
                 onPress={() => setDeleteModalVisible(false)}
@@ -143,6 +152,7 @@ export default function MovementsScreens() {
                 <Text style={styles.cancelText}>No</Text>
               </TouchableOpacity>
 
+              {/* Eliminar */}
               <TouchableOpacity style={styles.deleteBtn} onPress={handleDelete}>
                 <Text style={styles.deleteText}>Eliminar</Text>
               </TouchableOpacity>
@@ -154,11 +164,12 @@ export default function MovementsScreens() {
   );
 }
 
-// estilos
+/* ------------------- ESTILOS ------------------- */
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff", padding: 16 },
 
   filterContainer: { flexDirection: "row", justifyContent: "space-between" },
+
   filterBox: {
     flexDirection: "row",
     alignItems: "center",
@@ -169,28 +180,51 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 8,
   },
+
   filterInput: { marginLeft: 6, flex: 1 },
   filterPlaceholder: { flex: 1, color: "#555" },
 
   tableHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 20,
+    marginTop: 16,
     paddingBottom: 8,
   },
-  headerText: { flex: 1, fontWeight: "500", color: "#555", fontSize: 12 },
+
+  headerText: {
+    flex: 1,
+    fontWeight: "600",
+    color: "#555",
+    fontSize: 12,
+  },
 
   row: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 10,
+    paddingVertical: 9,
     borderBottomWidth: 1,
     borderBottomColor: "#EEE",
   },
+
   cell: { flex: 1, fontSize: 12 },
   cellSmall: { flex: 1.2, fontSize: 11 },
 
-  editBtn: { paddingHorizontal: 8 },
+  /* CHIP VERDE */
+  statusChip: {
+    backgroundColor: "#0F6B35",
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    borderRadius: 20,
+    flex: 1.3,
+  },
+  statusText: {
+    color: "#fff",
+    fontWeight: "600",
+    fontSize: 11,
+  },
+
+  /* EDITAR */
+  editBtn: { paddingHorizontal: 6 },
   editText: {
     color: "#0F6B35",
     borderWidth: 1,
@@ -201,6 +235,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
   },
 
+  /* CREAR */
   createBtn: {
     backgroundColor: "#0F6B35",
     padding: 14,
@@ -208,14 +243,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 20,
   },
-  createBtnText: { color: "#fff", fontSize: 16, fontWeight: "600" },
 
+  createBtnText: {
+    color: "#fff",
+    fontSize: 17,
+    fontWeight: "600",
+  },
+
+  /* MODAL */
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.4)",
     justifyContent: "center",
     alignItems: "center",
   },
+
   modalContent: {
     backgroundColor: "#fff",
     width: "80%",
@@ -223,12 +265,15 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: "center",
   },
+
   modalText: { fontSize: 16, textAlign: "center", marginVertical: 20 },
+
   modalButtons: {
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
   },
+
   cancelBtn: {
     flex: 1,
     padding: 12,
@@ -238,7 +283,9 @@ const styles = StyleSheet.create({
     borderColor: "#0F6B35",
     alignItems: "center",
   },
+
   cancelText: { color: "#0F6B35", fontWeight: "600" },
+
   deleteBtn: {
     flex: 1,
     padding: 12,
@@ -246,5 +293,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#0F6B35",
     alignItems: "center",
   },
+
   deleteText: { color: "#fff", fontWeight: "600" },
 });

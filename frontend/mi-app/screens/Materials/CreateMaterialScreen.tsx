@@ -12,23 +12,24 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 
 export default function CreateMaterialScreen({ navigation }: any) {
-  const [type, setType] = useState("");
-  const [width, setWidth] = useState("");
-  const [height, setHeight] = useState("");
-  const [status, setStatus] = useState("");
-  const [stock, setStock] = useState("");
+  const [tipo, setTipo] = useState("");
+  const [ancho, setAncho] = useState("");
+  const [largo, setLargo] = useState("");
+  const [stockActual, setStockActual] = useState("");
+  const [stockMinimo, setStockMinimo] = useState("");
 
   const handleCreate = () => {
-    // aquí luego haces el POST al backend
+    // Aquí después haces el POST al backend
     navigation.goBack();
   };
 
   return (
     <ScrollView style={styles.container}>
       <TouchableOpacity onPress={() => navigation.goBack()}>
-        <Ionicons name="chevron-back" size={28} color="#000" />
+        <Ionicons name="chevron-back" size={30} color="#000" />
       </TouchableOpacity>
 
+      {/* LOGO */}
       <View style={styles.logoContainer}>
         <Image
           source={require("../../assets/logo.png")}
@@ -37,58 +38,61 @@ export default function CreateMaterialScreen({ navigation }: any) {
         />
       </View>
 
-      <View style={styles.row}>
-        <View style={styles.field}>
-          <Text style={styles.label}>Tipo</Text>
-          <TextInput
-            style={styles.input}
-            value={type}
-            onChangeText={setType}
-          />
-        </View>
+      {/* TIPO */}
+      <Text style={styles.label}>Tipo</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Tipo de material"
+        value={tipo}
+        onChangeText={setTipo}
+      />
 
-        <View style={styles.field}>
+      {/* ANCHO / LARGO */}
+      <View style={styles.row}>
+        <View style={{ flex: 1, marginRight: 8 }}>
           <Text style={styles.label}>Ancho</Text>
           <TextInput
             style={styles.input}
-            value={width}
-            onChangeText={setWidth}
+            placeholder="Ancho"
+            value={ancho}
+            onChangeText={setAncho}
             keyboardType="numeric"
           />
         </View>
-      </View>
 
-      <View style={styles.row}>
-        <View style={styles.field}>
+        <View style={{ flex: 1 }}>
           <Text style={styles.label}>Largo</Text>
           <TextInput
             style={styles.input}
-            value={height}
-            onChangeText={setHeight}
+            placeholder="Largo"
+            value={largo}
+            onChangeText={setLargo}
             keyboardType="numeric"
           />
         </View>
-
-        <View style={styles.field}>
-          <Text style={styles.label}>Activo</Text>
-          <TextInput
-            style={styles.input}
-            value={status}
-            onChangeText={setStatus}
-          />
-        </View>
       </View>
 
-      <View style={styles.field}>
-        <Text style={styles.label}>Stock</Text>
-        <TextInput
-          style={styles.input}
-          value={stock}
-          onChangeText={setStock}
-          keyboardType="numeric"
-        />
-      </View>
+      {/* STOCK ACTUAL */}
+      <Text style={styles.label}>Stock Actual*</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Cantidad actual"
+        value={stockActual}
+        onChangeText={setStockActual}
+        keyboardType="numeric"
+      />
 
+      {/* STOCK MINIMO */}
+      <Text style={styles.label}>Stock Mínimo*</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Cantidad mínima"
+        value={stockMinimo}
+        onChangeText={setStockMinimo}
+        keyboardType="numeric"
+      />
+
+      {/* BOTÓN CREAR */}
       <TouchableOpacity style={styles.button} onPress={handleCreate}>
         <Text style={styles.buttonText}>Crear Materia</Text>
       </TouchableOpacity>
@@ -97,28 +101,54 @@ export default function CreateMaterialScreen({ navigation }: any) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff", padding: 16 },
-  logoContainer: { alignItems: "center", marginVertical: 16 },
-  logo: { width: 200, height: 80 },
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    padding: 16,
+  },
 
-  row: { flexDirection: "row", justifyContent: "space-between" },
-  field: { flex: 1, marginRight: 8, marginBottom: 16 },
+  logoContainer: {
+    alignItems: "center",
+    marginVertical: 10,
+  },
 
-  label: { marginBottom: 4, fontWeight: "600" },
+  logo: {
+    width: 250,
+    height: 80,
+  },
+
+  label: {
+    marginTop: 12,
+    marginBottom: 4,
+    fontWeight: "600",
+    fontSize: 15,
+  },
+
   input: {
     borderWidth: 1,
-    borderColor: "#e0e0e0",
+    borderColor: "#DDD",
     borderRadius: 10,
-    padding: 10,
+    padding: 12,
+    fontSize: 14,
     backgroundColor: "#fff",
+  },
+
+  row: {
+    flexDirection: "row",
+    marginTop: 12,
   },
 
   button: {
     backgroundColor: "#0F6B35",
-    padding: 16,
+    paddingVertical: 16,
     borderRadius: 10,
-    marginTop: 20,
     alignItems: "center",
+    marginTop: 25,
   },
-  buttonText: { color: "#fff", fontSize: 16, fontWeight: "600" },
+
+  buttonText: {
+    color: "#fff",
+    fontSize: 17,
+    fontWeight: "600",
+  },
 });

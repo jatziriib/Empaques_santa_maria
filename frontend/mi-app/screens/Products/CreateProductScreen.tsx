@@ -10,10 +10,9 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 
 export default function CreateProductScreen({ navigation }: any) {
-  const [name, setName] = useState("");
-  const [status, setStatus] = useState("");
-  const [stock, setStock] = useState("");
-  const [category, setCategory] = useState("");
+  const [nombre, setNombre] = useState("");
+  const [stockActual, setStockActual] = useState("");
+  const [stockMinimo, setStockMinimo] = useState("");
 
   const handleCreate = () => {
     console.log("Producto creado");
@@ -22,50 +21,44 @@ export default function CreateProductScreen({ navigation }: any) {
 
   return (
     <ScrollView style={styles.container}>
+      {/* Botón atrás */}
       <TouchableOpacity onPress={() => navigation.goBack()}>
         <Ionicons name="chevron-back" size={30} color="#000" />
       </TouchableOpacity>
 
+      {/* Título */}
       <Text style={styles.title}>Crear nuevo producto</Text>
 
       {/* Nombre */}
-      <Text style={styles.label}>Nombre*</Text>
+      <Text style={styles.label}>Nombre o descripción*</Text>
       <TextInput
         style={styles.input}
-        placeholder="Nombre del producto"
-        value={name}
-        onChangeText={setName}
+        placeholder="Nombre o identificación de la tarima"
+        value={nombre}
+        onChangeText={setNombre}
       />
 
-      {/* Status */}
-      <Text style={styles.label}>Status</Text>
+      {/* Stock actual */}
+      <Text style={styles.label}>Stock actual*</Text>
       <TextInput
         style={styles.input}
-        placeholder="Activo / Inactivo"
-        value={status}
-        onChangeText={setStatus}
-      />
-
-      {/* Existencia */}
-      <Text style={styles.label}>En existencia</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Cantidad"
+        placeholder="Cantidad actual"
         keyboardType="numeric"
-        value={stock}
-        onChangeText={setStock}
+        value={stockActual}
+        onChangeText={setStockActual}
       />
 
-      {/* Categoría */}
-      <Text style={styles.label}>Categoría</Text>
+      {/* Stock mínimo */}
+      <Text style={styles.label}>Stock mínimo*</Text>
       <TextInput
-        style={styles.textArea}
-        placeholder="Categoría"
-        multiline
-        value={category}
-        onChangeText={setCategory}
+        style={styles.input}
+        placeholder="Cantidad mínima"
+        keyboardType="numeric"
+        value={stockMinimo}
+        onChangeText={setStockMinimo}
       />
 
+      {/* Botón crear */}
       <TouchableOpacity style={styles.createBtn} onPress={handleCreate}>
         <Text style={styles.btnText}>Crear producto</Text>
       </TouchableOpacity>
@@ -77,47 +70,45 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    padding: 16,
+    padding: 20,
   },
 
   title: {
-    fontSize: 22,
+    fontSize: 26,
     fontWeight: "700",
-    marginVertical: 16,
+    marginTop: 10,
+    marginBottom: 25,
+    color: "#000",
   },
 
   label: {
-    marginTop: 12,
-    marginBottom: 4,
-    fontWeight: "600",
+    fontWeight: "700",
+    fontSize: 15,
+    marginBottom: 6,
+    marginTop: 10,
   },
 
   input: {
+    backgroundColor: "#fff",
+    borderRadius: 15,
+    padding: 14,
+    fontSize: 15,
     borderWidth: 1,
-    borderColor: "#DDD",
-    borderRadius: 10,
-    padding: 12,
-  },
-
-  textArea: {
-    borderWidth: 1,
-    borderColor: "#DDD",
-    borderRadius: 10,
-    padding: 12,
-    minHeight: 90,
+    borderColor: "#ddd",
+    marginBottom: 5,
   },
 
   createBtn: {
     backgroundColor: "#0F6B35",
-    padding: 16,
-    borderRadius: 10,
-    marginTop: 20,
+    padding: 18,
+    borderRadius: 12,
+    marginTop: 30,
     alignItems: "center",
   },
 
   btnText: {
     color: "#fff",
-    fontSize: 17,
-    fontWeight: "600",
+    fontSize: 18,
+    fontWeight: "700",
   },
 });
