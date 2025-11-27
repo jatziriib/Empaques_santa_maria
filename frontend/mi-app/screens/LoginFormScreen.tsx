@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { usrAuth } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import {
   View,
   Text,
@@ -13,7 +13,8 @@ import {
 export default function LoginFormScreen({ navigation }: any) {
   const [correo, setCorreo] = useState("");
   const [contrasena, setContrasena] = useState("");
-  const { iniciarSesion } = usrAuth();
+
+  const { iniciarSesion } = useAuth();
 
   const handleLogin = async () => {
     try {
@@ -30,15 +31,18 @@ export default function LoginFormScreen({ navigation }: any) {
         return;
       }
 
-      //guardar el token y datos en el contexto
-      await iniciarSesion(data.token, { correo });
+      // Guardar token + datos del usuario
+      await iniciarSesion(data.token, data.usuario);
 
-      navigation.navigate("Resumen");
+      // Navegar al drawer (que abre en Resumen)
+      navigation.navigate("Home");
+
     } catch (error) {
       console.log(error);
       Alert.alert("Error", "No se pudo iniciar sesión. Intenta de nuevo.");
     }
-  }
+  };
+
   return (
     <View style={styles.container}>
       <Image
@@ -64,14 +68,10 @@ export default function LoginFormScreen({ navigation }: any) {
         placeholderTextColor="#777"
       />
 
-      {/* 🔹 Botón de inicio de sesión */}
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Iniciar Sesión</Text>
       </TouchableOpacity>
-
-      
     </View>
-
   );
 }
 
@@ -109,10 +109,5 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "600",
-  },
-  link: {
-    marginTop: 15,
-    color: "#555",
-    fontSize: 14,
   },
 });

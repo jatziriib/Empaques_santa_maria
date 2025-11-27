@@ -2,42 +2,44 @@ import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-// Screens
+// --- Screens principales ---
 import SplashScreen from "../screens/SplashScreen";
 import LoginScreen from "../screens/LoginScreen";
 import LoginFormScreen from "../screens/LoginFormScreen";
 import RegisterScreen from "../screens/RegisterScreen";
-<<<<<<< HEAD
 
-// Productos
+// --- Productos ---
 import CreateProductScreen from "../screens/Products/CreateProductScreen";
 import EditProductScreen from "../screens/Products/EditProductScreen";
 
-// Materia prima 👇
+// --- Materia prima ---
 import CreateMaterialScreen from "../screens/Materials/CreateMaterialScreen";
 import EditMaterialScreen from "../screens/Materials/EditMaterialScreen";
-// Usuarios 👇
+
+// --- Usuarios ---
 import UsersScreens from "../screens/Users/UsersScreens";
 import CreateUserScreen from "../screens/Users/CreateUserScreen";
 import EditUserScreen from "../screens/Users/EditUserScreen";
 
+// --- Movimientos ---
+import CreateMovementScreen from "../screens/Movements/CreateMovementScreen";
+import EditMovementScreen from "../screens/Movements/EditMovementScreen";
 
-// Drawer principal
+// --- Drawer principal ---
 import DrawerNavigator from "./DrawerNavigator";
-=======
-import ResumenScreen from "../screens/ResumenScreen";
-import RecuperarContrasena from "../screens/RecuperarContrasenaScreen";
 
 
->>>>>>> d6391ffc46b0e350440fa3b9492f342944786e0d
 
+// -------------------------------------
+// TIPADO DE RUTAS
+// -------------------------------------
 export type RootStackParamList = {
   Splash: undefined;
   Login: undefined;
   LoginForm: undefined;
   Register: undefined;
-<<<<<<< HEAD
-  Home: undefined;
+
+  Home: undefined; // Drawer
 
   // Productos
   CreateProduct: undefined;
@@ -46,17 +48,22 @@ export type RootStackParamList = {
   // Materia prima
   CreateMaterial: undefined;
   EditMaterial: { material: any };
+
   // Usuarios
   CreateUser: undefined;
   EditUser: { user: any };
-=======
-  Resumen: undefined;
-   RecuperarContrasena: undefined;
->>>>>>> d6391ffc46b0e350440fa3b9492f342944786e0d
+
+  // Movimientos
+  CreateMovement: undefined;
+  EditMovement: { movement: any };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
+
+// -------------------------------------
+// NAVEGADOR PRINCIPAL
+// -------------------------------------
 export default function AppNavigator() {
   return (
     <NavigationContainer>
@@ -64,32 +71,32 @@ export default function AppNavigator() {
         initialRouteName="Splash"
         screenOptions={{ headerShown: false }}
       >
-        {/* Flujo inicial */}
+
+        {/* INICIO */}
         <Stack.Screen name="Splash" component={SplashScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="LoginForm" component={LoginFormScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
-<<<<<<< HEAD
 
-        {/* Productos */}
+        {/* --- Productos --- */}
         <Stack.Screen name="CreateProduct" component={CreateProductScreen} />
         <Stack.Screen name="EditProduct" component={EditProductScreen} />
 
-        {/* Materia prima */}
+        {/* --- Materia Prima --- */}
         <Stack.Screen name="CreateMaterial" component={CreateMaterialScreen} />
         <Stack.Screen name="EditMaterial" component={EditMaterialScreen} />
 
-        {/* Usuarios */}
-<Stack.Screen name="CreateUser" component={CreateUserScreen} />
-<Stack.Screen name="EditUser" component={EditUserScreen} />
+        {/* --- Usuarios --- */}
+        <Stack.Screen name="CreateUser" component={CreateUserScreen} />
+        <Stack.Screen name="EditUser" component={EditUserScreen} />
 
+        {/* --- Movimientos --- */}
+        <Stack.Screen name="CreateMovement" component={CreateMovementScreen} />
+        <Stack.Screen name="EditMovement" component={EditMovementScreen} />
 
-        {/* Drawer (Resumen, Usuarios, Productos, Materia, Movimientos) */}
+        {/* --- Drawer Principal --- */}
         <Stack.Screen name="Home" component={DrawerNavigator} />
-=======
-        <Stack.Screen name="Resumen" component={ResumenScreen} />
-         <Stack.Screen name="RecuperarContrasena" component={RecuperarContrasena} />
->>>>>>> d6391ffc46b0e350440fa3b9492f342944786e0d
+
       </Stack.Navigator>
     </NavigationContainer>
   );

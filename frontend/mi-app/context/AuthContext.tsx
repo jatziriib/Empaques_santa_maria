@@ -1,47 +1,57 @@
-import Recat, {createContext, useState, useEffect, useContext} from "react";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { createContext, useState, useEffect, useContext } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-//tipos de datos del contexto
-interface TipoContextoAuth{
-    usuario:any;
-    token: string | null;
-    iniciarSesion: (token:string, datosUsuario:any) => Promise<void>;
-    cerrarSesion:()=>Promise<void>;
+// Tipos del contexto
+interface TipoContextoAuth {
+  usuario: any;
+  token: string | null;
+  iniciarSesion: (token: string, datosUsuario: any) => Promise<void>;
+  cerrarSesion: () => Promise<void>;
 }
 
-const ContextoAuth = createContext<TipoContextoAuth | undefined>(undefined);
+// Crear contexto
+export const ContextoAuth = createContext<TipoContextoAuth | undefined>(undefined);
 
+// Proveedor
 export const ProveedorAuth: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [usuario, setUsuario] = useState<any>(null);
   const [token, setToken] = useState<string | null>(null);
 
-  //cargar datos guardados local
+  // Cargar datos guardados localmente
   useEffect(() => {
-    const cargarDatosAuth = async () => {
-      const tokenGuardado = await AsyncStorage.getItem("token");
-      const usuarioGuardado = await AsyncStorage.getItem("usuario");
-      if (tokenGuardado && usuarioGuardado) {
-        setToken(tokenGuardado);
-        setUsuario(JSON.parse(usuarioGuardado));
+    const cargarDatos = async () => {
+      try {
+        const tokenGuardado = await AsyncStorage.getItem("token");
+        const usuarioGuardado = await AsyncStorage.getItem("usuario");
+
+        if (tokenGuardado && usuarioGuardado) {
+          setToken(tokenGuardado);
+          setUsuario(JSON.parse(usuarioGuardado));
+        }
+      } catch (error) {
+        console.log("Error cargando datos de sesión:", error);
       }
     };
-    cargarDatosAuth();
+
+    cargarDatos();
   }, []);
 
-  //guardar datos de login
+  // Guardar datos al iniciar sesión
   const iniciarSesion = async (token: string, datosUsuario: any) => {
     setToken(token);
     setUsuario(datosUsuario);
+
     await AsyncStorage.setItem("token", token);
     await AsyncStorage.setItem("usuario", JSON.stringify(datosUsuario));
   };
 
-  //eliminar datos cuando se cierra sesion
+  // Eliminar datos de sesión
   const cerrarSesion = async () => {
-    setToken(null);
-    setUsuario(null);
     await AsyncStorage.removeItem("token");
     await AsyncStorage.removeItem("usuario");
+
+    setToken(null);
+    setUsuario(null);
   };
 
   return (
@@ -51,11 +61,11 @@ export const ProveedorAuth: React.FC<{ children: React.ReactNode }> = ({ childre
   );
 };
 
-//hook para usr el contexto
-export const usrAuth = () => {
+// Hook para usar el contexto
+export const useAuth = () => {
   const contexto = useContext(ContextoAuth);
   if (!contexto) {
-    throw new Error("Errorrr");
+    throw new Error("useAuth debe usarse dentro de un ProveedorAuth");
   }
   return contexto;
 };
